@@ -4,10 +4,9 @@ import com.commandoby.stringCalculator.enums.Operation;
 
 public class Operand {
 	Operation operation;
-	int operandNumber;
-	
-	public Operand(Operation operation, int operandNumber) {
-		super();
+	double operandNumber;
+
+	public Operand(Operation operation, double operandNumber) {
 		this.operation = operation;
 		this.operandNumber = operandNumber;
 	}
@@ -20,11 +19,11 @@ public class Operand {
 		this.operation = operation;
 	}
 
-	public int getOperandNumber() {
+	public double getOperandNumber() {
 		return operandNumber;
 	}
 
-	public void setOperandNumber(int operandNumber) {
+	public void setOperandNumber(double operandNumber) {
 		this.operandNumber = operandNumber;
 	}
 
@@ -32,7 +31,9 @@ public class Operand {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + operandNumber;
+		long temp;
+		temp = Double.doubleToLongBits(operandNumber);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((operation == null) ? 0 : operation.hashCode());
 		return result;
 	}
@@ -46,7 +47,7 @@ public class Operand {
 		if (getClass() != obj.getClass())
 			return false;
 		Operand other = (Operand) obj;
-		if (operandNumber != other.operandNumber)
+		if (Double.doubleToLongBits(operandNumber) != Double.doubleToLongBits(other.operandNumber))
 			return false;
 		if (operation != other.operation)
 			return false;
@@ -57,6 +58,5 @@ public class Operand {
 	public String toString() {
 		return "Operand [operation=" + operation + ", operandNumber=" + operandNumber + "]";
 	}
-	
-	
+
 }

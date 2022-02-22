@@ -3,28 +3,34 @@ package com.commandoby.stringCalculator.enums;
 public enum Operation {
 	ADD{
 		@Override
-		public int action(int x, int y) {
+		public double action(double x, double y) {
 			return x + y;
 		}
-    },
-    SUBTRACT{
+	},
+	SUBTRACT{
 		@Override
-		public int action(int x, int y) {
-			return x-y;
+		public double action(double x, double y) {
+			return x - y;
 		}
-    },
-    MULTIPLY{
+	},
+	MULTIPLY{
 		@Override
-		public int action(int x, int y) {
+		public double action(double x, double y) {
 			return x * y;
 		}
-    },
-    DIVIDE{
+	},
+	DIVIDE{
 		@Override
-		public int action(int x, int y) {
+		public double action(double x, double y) {
 			return x / y;
 		}
-    };
-	
-	public abstract int action(int x, int y);
+	},
+	EXPONENTIETION {
+		@Override
+		public double action(double x, double y) {
+			return Math.pow(x, y);
+		}
+	};
+
+	public abstract double action(double x, double y);
 }
