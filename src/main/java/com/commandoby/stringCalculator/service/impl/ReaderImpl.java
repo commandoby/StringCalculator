@@ -7,17 +7,20 @@ import java.util.regex.Pattern;
 
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
+import com.commandoby.stringCalculator.exceptions.ConflictOfOperationsException;
+import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.service.Reader;
 
 public class ReaderImpl implements Reader {
-	private Operand targetOperand = new Operand(Operation.ADD, 0);
+	private Operand targetOperand = new Operand(null, 0);
+	boolean negative = false;
 
-	public List<Operand> read(String text) {
+	@Override
+	public List<Operand> read(String text) throws InvalidCharacterException, ConflictOfOperationsException {
 		List<Operand> operandList = new ArrayList<>();
-		operandList.add(new Operand(Operation.ADD, 0));
 
 		for (int i = 0; i < text.length(); i++) {
-			String sumbol = text.substring(i, i+1);
+			String sumbol = text.substring(i, i + 1);
 
 			if (sumbol.equals(" ")) {
 				continue;
@@ -29,39 +32,67 @@ public class ReaderImpl implements Reader {
 			if (sumbol.matches("\\d")) {
 				i = readNumber(text, i) - 1;
 				operandList.add(targetOperand);
-				targetOperand = new Operand(Operation.ADD, 0);
+				targetOperand = new Operand(null, 0);
 				continue;
 			}
+			throw new InvalidCharacterException("Invalid character: " + sumbol);
 		}
 		return operandList;
 	}
 
-	private void readOperation(String sumbol) {
+	private void readOperation(String sumbol) throws InvalidCharacterException, ConflictOfOperationsException {
 		switch (sumbol) {
-		case "+": 
-			targetOperand.setOperation(Operation.ADD);
+		case "+":
+			checkAndSetOperation(Operation.ADD);
 			break;
-		case "-": 
-			targetOperand.setOperation(Operation.SUBTRACT);
+		case "-":
+			checkAndSetOperation(Operation.SUBTRACT);
 			break;
-		case "*": 
-			targetOperand.setOperation(Operation.MULTIPLY);
+		case "*":
+			checkAndSetOperation(Operation.MULTIPLY);
 			break;
-		case "/": 
-			targetOperand.setOperation(Operation.DIVIDE);
+		case "/":
+			checkAndSetOperation(Operation.DIVIDE);
 			break;
-		case "^": 
-			targetOperand.setOperation(Operation.EXPONENTIETION);
+		case "^":
+			checkAndSetOperation(Operation.EXPONENTIETION);
 			break;
+		default:
+			throw new InvalidCharacterException("Invalid character: " + sumbol);
+		}
+	}
+
+	private void checkAndSetOperation(Operation operation) throws ConflictOfOperationsException {
+		if (operation == Operation.SUBTRACT && targetOperand.getOperation() != null && !negative) {
+			negative = true;
+			return;
+		}
+
+		if (targetOperand.getOperation() == null) {
+			targetOperand.setOperation(operation);
+		} else {
+			throw new ConflictOfOperationsException(
+					"Conflict of operations: " + targetOperand.getOperation().name()
+					+ " and " + operation.name());
 		}
 	}
 
 	private int readNumber(String text, int i) {
-		Pattern pattern = Pattern.compile("\\d+");
+		Pattern pattern = Pattern.compile("\\d+(\\.|,)?\\d*");
 		Matcher matcher = pattern.matcher(text);
 		matcher.find(i);
 		String numberString = matcher.group();
-		targetOperand.setOperandNumber(Double.valueOf(numberString));
+
+		Pattern commaPattern = Pattern.compile(",");
+		Matcher commaMatcher = commaPattern.matcher(numberString);
+		String numberStringWithoutComma = commaMatcher.replaceAll(".");
+
+		double value = Double.valueOf(numberStringWithoutComma);
+		if (negative) {
+			value *= -1;
+		}
+		negative = false;
+		targetOperand.setOperandNumber(value);
 		return matcher.end();
 	}
 

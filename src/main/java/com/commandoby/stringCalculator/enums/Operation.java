@@ -1,25 +1,25 @@
 package com.commandoby.stringCalculator.enums;
 
 public enum Operation {
-	ADD{
+	ADD {
 		@Override
 		public double action(double x, double y) {
 			return x + y;
 		}
 	},
-	SUBTRACT{
+	SUBTRACT {
 		@Override
 		public double action(double x, double y) {
 			return x - y;
 		}
 	},
-	MULTIPLY{
+	MULTIPLY {
 		@Override
 		public double action(double x, double y) {
 			return x * y;
 		}
 	},
-	DIVIDE{
+	DIVIDE {
 		@Override
 		public double action(double x, double y) {
 			return x / y;
