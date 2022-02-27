@@ -1,16 +1,11 @@
 package com.commandoby.stringCalculator.enums;
 
 public enum Operation {
-	ADD {
+
+	EXPONENTIETION {
 		@Override
 		public double action(double x, double y) {
-			return x + y;
-		}
-	},
-	SUBTRACT {
-		@Override
-		public double action(double x, double y) {
-			return x - y;
+			return Math.pow(x, y);
 		}
 	},
 	MULTIPLY {
@@ -25,10 +20,16 @@ public enum Operation {
 			return x / y;
 		}
 	},
-	EXPONENTIETION {
+	ADD {
 		@Override
 		public double action(double x, double y) {
-			return Math.pow(x, y);
+			return x + y;
+		}
+	},
+	SUBTRACT {
+		@Override
+		public double action(double x, double y) {
+			return x - y;
 		}
 	};
 

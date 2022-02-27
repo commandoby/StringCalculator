@@ -1,14 +1,19 @@
 package com.commandoby.stringCalculator.components;
 
+import java.util.List;
+import java.util.Objects;
+
 import com.commandoby.stringCalculator.enums.Operation;
 
 public class Operand {
 	Operation operation;
 	double operandNumber;
+	List<Operand> operandList;
 
-	public Operand(Operation operation, double operandNumber) {
+	public Operand(Operation operation, double operandNumber, List<Operand> operandList) {
 		this.operation = operation;
 		this.operandNumber = operandNumber;
+		this.operandList = operandList;
 	}
 
 	public Operation getOperation() {
@@ -27,15 +32,17 @@ public class Operand {
 		this.operandNumber = operandNumber;
 	}
 
+	public List<Operand> getOperandList() {
+		return operandList;
+	}
+
+	public void setOperandList(List<Operand> operandList) {
+		this.operandList = operandList;
+	}
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(operandNumber);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((operation == null) ? 0 : operation.hashCode());
-		return result;
+		return Objects.hash(operandList, operandNumber, operation);
 	}
 
 	@Override
@@ -47,16 +54,15 @@ public class Operand {
 		if (getClass() != obj.getClass())
 			return false;
 		Operand other = (Operand) obj;
-		if (Double.doubleToLongBits(operandNumber) != Double.doubleToLongBits(other.operandNumber))
-			return false;
-		if (operation != other.operation)
-			return false;
-		return true;
+		return Objects.equals(operandList, other.operandList)
+				&& Double.doubleToLongBits(operandNumber) == Double.doubleToLongBits(other.operandNumber)
+				&& operation == other.operation;
 	}
 
 	@Override
 	public String toString() {
-		return "Operand [operation=" + operation + ", operandNumber=" + operandNumber + "]";
+		return "Operand [operation=" + operation + ", operandNumber=" + operandNumber + ", operandList=" + operandList
+				+ "]";
 	}
 
 }

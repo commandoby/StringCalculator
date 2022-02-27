@@ -1,23 +1,44 @@
 package com.commandoby.stringCalculator.service.impl;
 
-import java.util.List;
-
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.service.Solver;
 
 public class SolverImpl implements Solver {
-	private static final Operation[] operationPriorityList = {
-			Operation.EXPONENTIETION, Operation.MULTIPLY, Operation.DIVIDE,
-			Operation.ADD, Operation.SUBTRACT};
 
 	@Override
-	public double solve(List<Operand> operandList) {
-		/*while (operandList.size() > 1) {
+	public double solve(Operand operand) {
+		if (operand.getOperandList() != null) {
+			while (operand.getOperandList().size() > 1) {
+				solverLoop(operand);
+			}
 			
-		}*/
+			operand.setOperandNumber(operand.getOperandList().get(0).getOperandNumber());
+			operand.setOperandList(null);
+		} else {
+			return operand.getOperandNumber();
+		}
 		
-		return operandList.get(0).getOperandNumber();
+		return operand.getOperandNumber();
+	}
+	
+	private void solverLoop(Operand operand) {
+		for(int i = 0; i < Operation.values().length; i++) {
+			for(int j = 1; j < operand.getOperandList().size(); j++) {
+				if (operand.getOperandList().get(j).getOperation().equals(Operation.values()[i])) {
+						solveOperand(operand, Operation.values()[i], j);
+					j = 1;
+				}
+			}
+		}
+	}
+	
+	private void solveOperand(Operand operand, Operation operation, int operandNumber) {
+		double operandNumberFirst = operand.getOperandList().get(operandNumber - 1).getOperandNumber();
+		double operandNumberSecond = operand.getOperandList().get(operandNumber).getOperandNumber();
+		double opernadNumberResult = operation.action(operandNumberFirst, operandNumberSecond);
+		operand.getOperandList().get(operandNumber - 1).setOperandNumber(opernadNumberResult);
+		operand.getOperandList().remove(operandNumber);
 	}
 
 }

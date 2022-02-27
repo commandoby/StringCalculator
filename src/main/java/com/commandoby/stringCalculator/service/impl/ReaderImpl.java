@@ -12,12 +12,12 @@ import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.service.Reader;
 
 public class ReaderImpl implements Reader {
-	private Operand targetOperand = new Operand(null, 0);
+	private Operand inclusiveOperand = new Operand(null, 0, null);
 	boolean negative = false;
 
 	@Override
-	public List<Operand> read(String text) throws InvalidCharacterException, ConflictOfOperationsException {
-		List<Operand> operandList = new ArrayList<>();
+	public Operand read(String text) throws InvalidCharacterException, ConflictOfOperationsException {
+		Operand mainOperand = new Operand(null, 0, new ArrayList<Operand>());
 
 		for (int i = 0; i < text.length(); i++) {
 			String sumbol = text.substring(i, i + 1);
@@ -25,19 +25,19 @@ public class ReaderImpl implements Reader {
 			if (sumbol.equals(" ")) {
 				continue;
 			}
-			if (sumbol.matches("(\\+|-|\\*|/|^)")) {
+			if (sumbol.matches("(\\+|-|\\*|/|\\^)")) {
 				readOperation(sumbol);
 				continue;
 			}
 			if (sumbol.matches("\\d")) {
 				i = readNumber(text, i) - 1;
-				operandList.add(targetOperand);
-				targetOperand = new Operand(null, 0);
+				mainOperand.getOperandList().add(inclusiveOperand);
+				inclusiveOperand = new Operand(null, 0, null);
 				continue;
 			}
 			throw new InvalidCharacterException("Invalid character: " + sumbol);
 		}
-		return operandList;
+		return mainOperand;
 	}
 
 	private void readOperation(String sumbol) throws InvalidCharacterException, ConflictOfOperationsException {
@@ -63,16 +63,16 @@ public class ReaderImpl implements Reader {
 	}
 
 	private void checkAndSetOperation(Operation operation) throws ConflictOfOperationsException {
-		if (operation == Operation.SUBTRACT && targetOperand.getOperation() != null && !negative) {
+		if (operation == Operation.SUBTRACT && inclusiveOperand.getOperation() != null && !negative) {
 			negative = true;
 			return;
 		}
 
-		if (targetOperand.getOperation() == null) {
-			targetOperand.setOperation(operation);
+		if (inclusiveOperand.getOperation() == null) {
+			inclusiveOperand.setOperation(operation);
 		} else {
 			throw new ConflictOfOperationsException(
-					"Conflict of operations: " + targetOperand.getOperation().name()
+					"Conflict of operations: " + inclusiveOperand.getOperation().name()
 					+ " and " + operation.name());
 		}
 	}
@@ -92,7 +92,7 @@ public class ReaderImpl implements Reader {
 			value *= -1;
 		}
 		negative = false;
-		targetOperand.setOperandNumber(value);
+		inclusiveOperand.setOperandNumber(value);
 		return matcher.end();
 	}
 

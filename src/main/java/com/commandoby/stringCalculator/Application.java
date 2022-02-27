@@ -6,6 +6,7 @@ import java.util.Scanner;
 import org.apache.log4j.Logger;
 
 import com.commandoby.stringCalculator.components.Operand;
+import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.ConflictOfOperationsException;
 import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.service.Reader;
@@ -39,9 +40,9 @@ class Application {
 					scanner.close();
 					break;
 				default:
-					List<Operand> operandList = reader.read(text);
-					System.out.println(operandList);
-					double answer = solver.solve(operandList);
+					Operand operand = reader.read(text);
+					System.out.println(operand);
+					double answer = solver.solve(operand);
 					System.out.println("Answer: " + answer);
 				}
 			}
