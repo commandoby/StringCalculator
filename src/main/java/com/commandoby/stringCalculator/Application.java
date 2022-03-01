@@ -9,6 +9,7 @@ import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.ConflictOfOperationsException;
 import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
+import com.commandoby.stringCalculator.exceptions.SubEquationException;
 import com.commandoby.stringCalculator.service.Reader;
 import com.commandoby.stringCalculator.service.Solver;
 import com.commandoby.stringCalculator.service.impl.ReaderImpl;
@@ -26,8 +27,8 @@ class Application {
 		String text;
 		boolean active = true;
 
-		try {
-			while (active) {
+		while (active) {
+			try {
 				System.out.print("Enter the equation: ");
 				text = scanner.nextLine().trim();
 
@@ -40,14 +41,14 @@ class Application {
 					scanner.close();
 					break;
 				default:
-					Operand operand = reader.read(text);
+					Operand operand = new Operand(null, 0, reader.read(text));
 					System.out.println(operand);
 					double answer = solver.solve(operand);
 					System.out.println("Answer: " + answer);
 				}
+			} catch (InvalidCharacterException | ConflictOfOperationsException | SubEquationException e) {
+				log.error(e);
 			}
-		} catch (InvalidCharacterException | ConflictOfOperationsException e) {
-			log.error(e);
 		}
 	}
 }

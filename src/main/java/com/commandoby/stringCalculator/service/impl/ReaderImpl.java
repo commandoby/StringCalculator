@@ -9,15 +9,19 @@ import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.ConflictOfOperationsException;
 import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
+import com.commandoby.stringCalculator.exceptions.SubEquationException;
 import com.commandoby.stringCalculator.service.Reader;
+
+import static com.commandoby.stringCalculator.enums.Operation.*;
 
 public class ReaderImpl implements Reader {
 	private Operand inclusiveOperand = new Operand(null, 0, null);
 	boolean negative = false;
 
 	@Override
-	public Operand read(String text) throws InvalidCharacterException, ConflictOfOperationsException {
-		Operand mainOperand = new Operand(null, 0, new ArrayList<Operand>());
+	public List<Operand> read(String text)
+			throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+		List<Operand> operandList = new ArrayList<>();
 
 		for (int i = 0; i < text.length(); i++) {
 			String sumbol = text.substring(i, i + 1);
@@ -31,31 +35,46 @@ public class ReaderImpl implements Reader {
 			}
 			if (sumbol.matches("\\d")) {
 				i = readNumber(text, i) - 1;
-				mainOperand.getOperandList().add(inclusiveOperand);
+				operandList.add(inclusiveOperand);
 				inclusiveOperand = new Operand(null, 0, null);
 				continue;
 			}
+			if (sumbol.matches("(\\(|\\[|\\{)")) {
+				i = readSubEquation(text, i + 1);
+				operandList.add(inclusiveOperand);
+				inclusiveOperand = new Operand(null, 0, null);
+				continue;
+			}
+			if (sumbol.matches("(\\)|\\]|\\})")) {
+				throw new SubEquationException("Missing opening bracket.");
+			}
 			throw new InvalidCharacterException("Invalid character: " + sumbol);
 		}
-		return mainOperand;
+
+		if (operandList.get(0).getOperation() != null && operandList.get(0).getOperation().equals(SUBTRACT)
+				&& operandList.get(0).getOperandNumber() > 0 && operandList.get(0).getOperandList() == null) {
+			operandList.get(0).setOperandNumber(operandList.get(0).getOperandNumber() * (-1));
+			operandList.get(0).setOperation(null);
+		}
+		return operandList;
 	}
 
 	private void readOperation(String sumbol) throws InvalidCharacterException, ConflictOfOperationsException {
 		switch (sumbol) {
 		case "+":
-			checkAndSetOperation(Operation.ADD);
+			checkAndSetOperation(ADD);
 			break;
 		case "-":
-			checkAndSetOperation(Operation.SUBTRACT);
+			checkAndSetOperation(SUBTRACT);
 			break;
 		case "*":
-			checkAndSetOperation(Operation.MULTIPLY);
+			checkAndSetOperation(MULTIPLY);
 			break;
 		case "/":
-			checkAndSetOperation(Operation.DIVIDE);
+			checkAndSetOperation(DIVIDE);
 			break;
 		case "^":
-			checkAndSetOperation(Operation.EXPONENTIETION);
+			checkAndSetOperation(EXPONENTIETION);
 			break;
 		default:
 			throw new InvalidCharacterException("Invalid character: " + sumbol);
@@ -63,7 +82,7 @@ public class ReaderImpl implements Reader {
 	}
 
 	private void checkAndSetOperation(Operation operation) throws ConflictOfOperationsException {
-		if (operation == Operation.SUBTRACT && inclusiveOperand.getOperation() != null && !negative) {
+		if (operation.equals(SUBTRACT) && inclusiveOperand.getOperation() != null && !negative) {
 			negative = true;
 			return;
 		}
@@ -72,8 +91,7 @@ public class ReaderImpl implements Reader {
 			inclusiveOperand.setOperation(operation);
 		} else {
 			throw new ConflictOfOperationsException(
-					"Conflict of operations: " + inclusiveOperand.getOperation().name()
-					+ " and " + operation.name());
+					"Conflict of operations: " + inclusiveOperand.getOperation().name() + " and " + operation.name());
 		}
 	}
 
@@ -94,6 +112,29 @@ public class ReaderImpl implements Reader {
 		negative = false;
 		inclusiveOperand.setOperandNumber(value);
 		return matcher.end();
+	}
+
+	private int readSubEquation(String text, int startPoint)
+			throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+		Reader reader = new ReaderImpl();
+		int subEquationLevel = 0;
+
+		for (int i = startPoint; i < text.length(); i++) {
+			String sumbol = text.substring(i, i + 1);
+
+			if (sumbol.matches("(\\(|\\[|\\{)")) {
+				subEquationLevel++;
+			}
+			if (sumbol.matches("(\\)|\\]|\\})")) {
+				if (subEquationLevel == 0) {
+					inclusiveOperand.setOperandList(reader.read(text.substring(startPoint, i)));
+					return i;
+				} else {
+					subEquationLevel--;
+				}
+			}
+		}
+		throw new SubEquationException("Missing closing bracket.");
 	}
 
 }

@@ -8,31 +8,49 @@ public class SolverImpl implements Solver {
 
 	@Override
 	public double solve(Operand operand) {
+		Solver solver = new SolverImpl();
+
 		if (operand.getOperandList() != null) {
+			for (int i = 0; i < operand.getOperandList().size(); i++) {
+				if (operand.getOperandList().get(i).getOperandList() != null) {
+					operand.getOperandList().get(i).setOperandNumber(solver.solve(operand.getOperandList().get(i)));
+					operand.getOperandList().get(i).setOperandList(null);
+				}
+			}
+
 			while (operand.getOperandList().size() > 1) {
 				solverLoop(operand);
 			}
-			
+
 			operand.setOperandNumber(operand.getOperandList().get(0).getOperandNumber());
 			operand.setOperandList(null);
 		} else {
 			return operand.getOperandNumber();
 		}
-		
+
 		return operand.getOperandNumber();
 	}
-	
+
 	private void solverLoop(Operand operand) {
-		for(int i = 0; i < Operation.values().length; i++) {
-			for(int j = 1; j < operand.getOperandList().size(); j++) {
+		// Solver solver = new SolverImpl();
+
+		for (int i = 0; i < Operation.values().length; i++) {
+			for (int j = 1; j < operand.getOperandList().size(); j++) {
+				/*
+				 * if (operand.getOperandList().get(j).getOperandList() != null) {
+				 * operand.getOperandList().get(j).setOperandNumber(solver.solve(operand.
+				 * getOperandList().get(j)));
+				 * operand.getOperandList().get(j).setOperandList(null); j = 1; }
+				 */
+
 				if (operand.getOperandList().get(j).getOperation().equals(Operation.values()[i])) {
-						solveOperand(operand, Operation.values()[i], j);
+					solveOperand(operand, Operation.values()[i], j);
 					j = 1;
 				}
 			}
 		}
 	}
-	
+
 	private void solveOperand(Operand operand, Operation operation, int operandNumber) {
 		double operandNumberFirst = operand.getOperandList().get(operandNumber - 1).getOperandNumber();
 		double operandNumberSecond = operand.getOperandList().get(operandNumber).getOperandNumber();
