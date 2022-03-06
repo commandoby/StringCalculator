@@ -1,25 +1,28 @@
 package com.commandoby.stringCalculator;
 
-import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
 import com.commandoby.stringCalculator.components.Operand;
-import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.ConflictOfOperationsException;
 import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.exceptions.SubEquationException;
+import com.commandoby.stringCalculator.exceptions.WriteException;
 import com.commandoby.stringCalculator.service.Reader;
 import com.commandoby.stringCalculator.service.Solver;
+import com.commandoby.stringCalculator.service.Writer;
 import com.commandoby.stringCalculator.service.impl.ReaderImpl;
 import com.commandoby.stringCalculator.service.impl.SolverImpl;
+import com.commandoby.stringCalculator.service.impl.WriterImpl;
 
 class Application {
-	private static final String HELP = "exit - complete the program;\n" + "help - help for valid commands.";
+	private static final String HELP = "exit - complete the program;\n" + "help - help for valid commands;\n"
+			+ "point - numbers after the decimal point (Default: 2).\n" + "Example: 1.5 * (2 - 3) + 4^0.5";
 
 	private static Reader reader = new ReaderImpl();
 	private static Solver solver = new SolverImpl();
+	private static Writer writer = new WriterImpl();
 	private static Logger log = Logger.getLogger(Application.class);
 
 	public static void main(String[] args) {
@@ -40,13 +43,21 @@ class Application {
 					active = false;
 					scanner.close();
 					break;
+				case "point":
+					System.out.print("Enter the number of digits after the decimal point: ");
+					WriterImpl.numbersAfterTheDecimalPoint = Integer.parseInt(scanner.nextLine().trim());
+					break;
 				default:
 					Operand operand = new Operand(null, 0, reader.read(text));
-					System.out.println(operand);
+					String equation = writer.write(operand);
 					double answer = solver.solve(operand);
-					System.out.println("Answer: " + answer);
+					System.out.println(equation + " = " + writer.writeOperandNumber(answer));
 				}
 			} catch (InvalidCharacterException | ConflictOfOperationsException | SubEquationException e) {
+				log.error(e);
+			} catch (WriteException e) {
+				log.error(e);
+			} catch (NumberFormatException e) {
 				log.error(e);
 			}
 		}

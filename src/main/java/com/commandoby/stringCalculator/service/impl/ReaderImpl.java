@@ -101,11 +101,11 @@ public class ReaderImpl implements Reader {
 		matcher.find(i);
 		String numberString = matcher.group();
 
-		Pattern commaPattern = Pattern.compile(",");
-		Matcher commaMatcher = commaPattern.matcher(numberString);
-		String numberStringWithoutComma = commaMatcher.replaceAll(".");
+		Pattern decimalPointPattern = Pattern.compile(",");
+		Matcher decimalPointMatcher = decimalPointPattern.matcher(numberString);
+		String numberStringWithoutDecimalPoint = decimalPointMatcher.replaceAll(".");
 
-		double value = Double.valueOf(numberStringWithoutComma);
+		double value = Double.valueOf(numberStringWithoutDecimalPoint);
 		if (negative) {
 			value *= -1;
 		}

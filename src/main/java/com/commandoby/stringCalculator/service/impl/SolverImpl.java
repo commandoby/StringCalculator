@@ -32,17 +32,8 @@ public class SolverImpl implements Solver {
 	}
 
 	private void solverLoop(Operand operand) {
-		// Solver solver = new SolverImpl();
-
 		for (int i = 0; i < Operation.values().length; i++) {
 			for (int j = 1; j < operand.getOperandList().size(); j++) {
-				/*
-				 * if (operand.getOperandList().get(j).getOperandList() != null) {
-				 * operand.getOperandList().get(j).setOperandNumber(solver.solve(operand.
-				 * getOperandList().get(j)));
-				 * operand.getOperandList().get(j).setOperandList(null); j = 1; }
-				 */
-
 				if (operand.getOperandList().get(j).getOperation().equals(Operation.values()[i])) {
 					solveOperand(operand, Operation.values()[i], j);
 					j = 1;
