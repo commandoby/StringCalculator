@@ -1,14 +1,26 @@
 package com.commandoby.stringCalculator.service.impl;
 
+import java.util.ArrayList;
+
+import org.apache.log4j.Logger;
+
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
+import com.commandoby.stringCalculator.exceptions.WriteException;
 import com.commandoby.stringCalculator.service.Solver;
+import com.commandoby.stringCalculator.service.Writer;
 
 public class SolverImpl implements Solver {
+	public static boolean detailedSolution = false;
+	private static Operand staticOperand = null;
 
 	@Override
 	public double solve(Operand operand) {
 		Solver solver = new SolverImpl();
+
+		if (staticOperand == null || staticOperand.getOperandList() == null) {
+			staticOperand = operand;
+		}
 
 		if (operand.getOperandList() != null) {
 			for (int i = 0; i < operand.getOperandList().size(); i++) {
@@ -43,11 +55,33 @@ public class SolverImpl implements Solver {
 	}
 
 	private void solveOperand(Operand operand, Operation operation, int operandNumber) {
-		double operandNumberFirst = operand.getOperandList().get(operandNumber - 1).getOperandNumber();
-		double operandNumberSecond = operand.getOperandList().get(operandNumber).getOperandNumber();
-		double opernadNumberResult = operation.action(operandNumberFirst, operandNumberSecond);
+		Operand operandFirst = operand.getOperandList().get(operandNumber - 1).clone();
+		Operand operandSecond = operand.getOperandList().get(operandNumber).clone();
+		double opernadNumberResult = operation.action(operandFirst.getOperandNumber(),
+				operandSecond.getOperandNumber());
 		operand.getOperandList().get(operandNumber - 1).setOperandNumber(opernadNumberResult);
 		operand.getOperandList().remove(operandNumber);
+
+		if (detailedSolution) {
+			descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
+		}
+	}
+
+	private void descriptionSolution(Operand operandFirst, Operand operandSecond, double result) {
+		Writer writer = new WriterImpl();
+		Logger log = Logger.getLogger(getClass());
+
+		try {
+			Operand operand = new Operand(null, 0, new ArrayList<Operand>());
+			operand.getOperandList().add(operandFirst);
+			operand.getOperandList().add(operandSecond);
+			operand.getOperandList().get(0).setOperation(null);
+
+			System.out.println(writer.write(staticOperand) + "  [" + writer.write(operand) + " = "
+					+ writer.writeOperandNumber(result) + "]");
+		} catch (WriteException e) {
+			log.error(e);
+		}
 	}
 
 }

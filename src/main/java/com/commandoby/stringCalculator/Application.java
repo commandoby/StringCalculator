@@ -18,7 +18,8 @@ import com.commandoby.stringCalculator.service.impl.WriterImpl;
 
 class Application {
 	private static final String HELP = "exit - complete the program;\n" + "help - help for valid commands;\n"
-			+ "point - numbers after the decimal point (Default: 2).\n" + "Example: 1.5 * (2 - 3) + 4^0.5";
+			+ "point - numbers after the decimal point (Default: 2);\n" + "more on/more off - Detailed solution.\n"
+			+ "Example: 1.5 * (2 - 3) + 4^0.5";
 
 	private static Reader reader = new ReaderImpl();
 	private static Solver solver = new SolverImpl();
@@ -46,6 +47,14 @@ class Application {
 				case "point":
 					System.out.print("Enter the number of digits after the decimal point: ");
 					WriterImpl.numbersAfterTheDecimalPoint = Integer.parseInt(scanner.nextLine().trim());
+					break;
+				case "more on":
+					System.out.println("Detailed solution included.");
+					SolverImpl.detailedSolution = true;
+					break;
+				case "more off":
+					System.out.println("Detailed solution is off.");
+					SolverImpl.detailedSolution = false;
 					break;
 				default:
 					Operand operand = new Operand(null, 0, reader.read(text));

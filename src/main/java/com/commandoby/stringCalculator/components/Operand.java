@@ -65,4 +65,19 @@ public class Operand {
 				+ "]";
 	}
 
+	public Operand clone() {
+		Operand operand = new Operand(null, 0, null);
+
+		if (this.operation != null) {
+			operand.setOperation(this.operation);
+		}
+		if (this.operandList != null) {
+			operand.setOperandList(this.operandList);
+		} else {
+			operand.setOperandNumber(this.operandNumber);
+		}
+
+		return operand;
+	}
+
 }
