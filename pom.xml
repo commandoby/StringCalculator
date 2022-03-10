@@ -1,14 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>StringCalculator</groupId>
-  <artifactId>StringCalculator</artifactId>
-  <version>1.00-SNAPSHOT</version>
-  
-  <dependencies>
-	<dependency>
-	    <groupId>log4j</groupId>
-	    <artifactId>log4j</artifactId>
-	    <version>1.2.17</version>
-	</dependency>
-  </dependencies>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>StringCalculator</groupId>
+	<artifactId>StringCalculator</artifactId>
+	<version>1.00-SNAPSHOT</version>
+
+	<dependencies>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>5.8.2</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 </project>

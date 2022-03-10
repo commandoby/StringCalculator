@@ -32,43 +32,51 @@ class Application {
 		boolean active = true;
 
 		while (active) {
-			try {
-				System.out.print("Enter the equation: ");
-				text = scanner.nextLine().trim();
+			System.out.print("Enter the equation: ");
+			text = scanner.nextLine().trim();
 
-				switch (text) {
-				case "help":
-					System.out.println(HELP);
-					break;
-				case "exit":
-					active = false;
-					scanner.close();
-					break;
-				case "point":
-					System.out.print("Enter the number of digits after the decimal point: ");
-					WriterImpl.numbersAfterTheDecimalPoint = Integer.parseInt(scanner.nextLine().trim());
-					break;
-				case "more on":
-					System.out.println("Detailed solution included.");
-					SolverImpl.detailedSolution = true;
-					break;
-				case "more off":
-					System.out.println("Detailed solution is off.");
-					SolverImpl.detailedSolution = false;
-					break;
-				default:
-					Operand operand = new Operand(null, 0, reader.read(text));
-					String equation = writer.write(operand);
-					double answer = solver.solve(operand);
-					System.out.println(equation + " = " + writer.writeOperandNumber(answer));
-				}
-			} catch (InvalidCharacterException | ConflictOfOperationsException | SubEquationException e) {
-				log.error(e);
-			} catch (WriteException e) {
-				log.error(e);
-			} catch (NumberFormatException e) {
-				log.error(e);
+			switch (text) {
+			case "help":
+				System.out.println(HELP);
+				break;
+			case "exit":
+				active = false;
+				scanner.close();
+				break;
+			case "point":
+				System.out.print("Enter the number of digits after the decimal point: ");
+				WriterImpl.numbersAfterTheDecimalPoint = Integer.parseInt(scanner.nextLine().trim());
+				break;
+			case "more on":
+				System.out.println("Detailed solution included.");
+				SolverImpl.detailedSolution = true;
+				break;
+			case "more off":
+				System.out.println("Detailed solution is off.");
+				SolverImpl.detailedSolution = false;
+				break;
+			default:
+				getAnswer(text);
 			}
 		}
+	}
+
+	public static double getAnswer(String text) {
+		double answer = 0;
+
+		try {
+			Operand operand = new Operand(null, 0, reader.read(text));
+			String equation = writer.write(operand);
+			answer = solver.solve(operand);
+			System.out.println(equation + " = " + writer.writeOperandNumber(answer));
+		} catch (InvalidCharacterException | ConflictOfOperationsException | SubEquationException e) {
+			log.error(e);
+		} catch (WriteException e) {
+			log.error(e);
+		} catch (NumberFormatException e) {
+			log.error(e);
+		}
+
+		return answer;
 	}
 }
