@@ -1,5 +1,6 @@
 package com.commandoby.stringCalculator;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -12,4 +13,9 @@ public class GetAnswerTests {
 		double actualAnswer = Application.getAnswer(input);
 		Assertions.assertEquals(expected, actualAnswer);
 	}
+
+    @AfterAll
+    public static void tearDown() {
+        System.out.println("All GetAnswer tests are finished!");
+    }
 }

@@ -1,13 +1,16 @@
 package com.commandoby.stringCalculator.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.commandoby.stringCalculator.components.Operand;
+import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.ConflictOfOperationsException;
 import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.exceptions.SubEquationException;
@@ -22,11 +25,100 @@ public class ReaderTests {
 	}
 
 	@Test
-	public void Reader_Test1() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+	public void reader_Test1() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
 		expected.add(new Operand(null, -1, null));
 
 		List<Operand> actual = reader.read("-1");
-		Assertions.assertEquals(expected, actual);
+		assertEquals(expected, actual);
 	}
+	
+	@Test
+	public void reader_Test2() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+		List<Operand> expected = new ArrayList<>();
+		expected.add(new Operand(null, 10, null));
+		
+		List<Operand> actual = reader.read("   10   ");
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void reader_Test3() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+		List<Operand> expected = new ArrayList<>();
+		expected.add(new Operand(null, 1, null));
+		expected.add(new Operand(Operation.ADD, 2, null));
+		
+		List<Operand> actual = reader.read("1 + 2");
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void reader_Test4() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+		List<Operand> expected = new ArrayList<>();
+		expected.add(new Operand(null, 2, null));
+		expected.add(new Operand(Operation.ADD, 2, null));
+		expected.add(new Operand(Operation.MULTIPLY, 2, null));
+		
+		List<Operand> actual = reader.read("2+2*2");
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void reader_Test5() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+		List<Operand> expected = new ArrayList<>();
+		expected.add(new Operand(null, 0, new ArrayList<Operand>()));
+		expected.get(0).getOperandList().add(new Operand(null, 2, null));
+		expected.get(0).getOperandList().add(new Operand(Operation.ADD, 2, null));
+		expected.add(new Operand(Operation.MULTIPLY, 2, null));
+		
+		List<Operand> actual = reader.read("(2+2)*2");
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void reader_Test6() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+		List<Operand> expected = new ArrayList<>();
+		expected.add(new Operand(null, 0, new ArrayList<Operand>()));
+		expected.get(0).getOperandList().add(new Operand(null, 2, null));
+		expected.get(0).getOperandList().add(new Operand(Operation.DIVIDE, 0, new ArrayList<Operand>()));
+		expected.get(0).getOperandList().get(1).getOperandList().add(new Operand(null, 2, null));
+		expected.get(0).getOperandList().get(1).getOperandList().add(new Operand(Operation.ADD, 2, null));
+		expected.add(new Operand(Operation.EXPONENTIETION, 2, null));
+		
+		List<Operand> actual = reader.read("(2/(2+2))^2");
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void invalidCharacterException_Test() {
+		Throwable exception = assertThrows(InvalidCharacterException.class,
+				() -> reader.read("2+b"));
+		assertEquals("Invalid character: b", exception.getMessage());
+	}
+	
+	@Test
+	public void conflictOfOperationsException_Test() {
+		Throwable exception = assertThrows(ConflictOfOperationsException.class,
+				() -> reader.read("2+/2"));
+		assertEquals("Conflict of operations: ADD and DIVIDE", exception.getMessage());
+	}
+	
+	@Test
+	public void subEquationException_Test1() {
+		Throwable exception = assertThrows(SubEquationException.class,
+				() -> reader.read("2+(2*2"));
+		assertEquals("Missing closing bracket.", exception.getMessage());
+	}
+	
+	@Test
+	public void subEquationException_Test2() {
+		Throwable exception = assertThrows(SubEquationException.class,
+				() -> reader.read("2+(2*2))"));
+		assertEquals("Missing opening bracket.", exception.getMessage());
+	}
+
+    @AfterAll
+    public static void tearDown() {
+        System.out.println("All Reader tests are finished!");
+    }
 }
