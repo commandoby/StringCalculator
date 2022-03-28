@@ -2,6 +2,8 @@ package com.commandoby.stringCalculator;
 
 import java.util.Scanner;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
 
 import com.commandoby.stringCalculator.components.Operand;
@@ -15,6 +17,7 @@ import com.commandoby.stringCalculator.service.Writer;
 import com.commandoby.stringCalculator.service.impl.ReaderImpl;
 import com.commandoby.stringCalculator.service.impl.SolverImpl;
 import com.commandoby.stringCalculator.service.impl.WriterImpl;
+import com.commandoby.stringCalculator.swing.impl.ViewConsoleSwingImpl;
 
 class Application {
 	private static final String HELP = "exit - complete the program;\n" + "help - help for valid commands;\n"
@@ -30,6 +33,12 @@ class Application {
 		Scanner scanner = new Scanner(System.in);
 		String text;
 		boolean active = true;
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				new ViewConsoleSwingImpl();
+			}
+		});
 
 		while (active) {
 			System.out.print("Enter the equation: ");
