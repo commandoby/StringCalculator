@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
+import com.commandoby.stringCalculator.Application;
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.WriteException;
 import com.commandoby.stringCalculator.service.Solver;
 import com.commandoby.stringCalculator.service.Writer;
+import com.commandoby.stringCalculator.swing.ViewConsoleSwing;
 
 public class SolverImpl implements Solver {
 	public static boolean detailedSolution = false;
@@ -77,8 +79,13 @@ public class SolverImpl implements Solver {
 			operand.getOperandList().add(operandSecond);
 			operand.getOperandList().get(0).setOperation(null);
 
-			System.out.println(writer.write(staticOperand) + "  [" + writer.write(operand) + " = "
-					+ writer.writeOperandNumber(result) + "]");
+			String detailedSolutionText = "  [" + writer.write(operand) + " = " + writer.writeOperandNumber(result)
+					+ "] " + writer.write(staticOperand);
+			if (Application.console) {
+				System.out.println(detailedSolutionText);
+			} else {
+				ViewConsoleSwing.addConsoleLine(detailedSolutionText);
+			}
 		} catch (WriteException e) {
 			log.error(e);
 		}
