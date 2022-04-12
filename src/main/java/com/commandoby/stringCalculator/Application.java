@@ -23,8 +23,7 @@ public class Application {
 	private static final String HELP = "exit - complete the program;\n" + "help - help for valid commands;\n"
 			+ "point - numbers after the decimal point (Default: 2);\n" + "more on/more off - Detailed solution.\n"
 			+ "Example: 1.5 * (2 - 3) + 4^0.5\n";
-	public static final String START = "Welcome to the program for calculating equations.\n"
-			+ "Enter formula or command:\n";
+	public static final String START = "Welcome to the program for calculating equations.\n";
 
 	private static Reader reader = new ReaderImpl();
 	private static Solver solver = new SolverImpl();

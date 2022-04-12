@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -19,7 +21,7 @@ public class ViewConsoleSwing  implements Runnable, ActionListener {
 	@Override
 	public void run() {
 		frame = new JFrame("String calculator");
-		frame.setSize(800, 600);
+		frame.setSize(600, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		
@@ -31,15 +33,20 @@ public class ViewConsoleSwing  implements Runnable, ActionListener {
 		textArea = new JTextArea();
 		textArea.setEditable(false);
 		frame.add(new JScrollPane(textArea));
+
+		JPanel downPanel = new JPanel(new BorderLayout());
+		downPanel.add(new JLabel(" Enter the equation: "), BorderLayout.WEST);
 		
 		enterField = new JTextField();
 		enterField.setActionCommand("enterField");
 		enterField.addActionListener(this);
-		frame.add(enterField, BorderLayout.SOUTH);
+		downPanel.add(enterField);
+		
+		frame.add(downPanel, BorderLayout.SOUTH);
 	}
 	
 	public static void addConsoleLine(String text) {
-		textArea.setText(textArea.getText() + text + "\n");
+		textArea.append(text + "\n");
 	}
  
 	@Override
