@@ -1,6 +1,8 @@
 package com.commandoby.stringCalculator;
 
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.SwingUtilities;
 
@@ -21,7 +23,7 @@ import com.commandoby.stringCalculator.swing.ViewConsoleSwing;
 
 public class Application {
 	private static final String HELP = "exit - complete the program;\n" + "help - help for valid commands;\n"
-			+ "point - numbers after the decimal point (Default: 2);\n" + "more on/more off - Detailed solution.\n"
+			+ "point (n) - numbers after the decimal point (Default: 2);\n" + "more on/more off - Detailed solution.\n"
 			+ "Example: 1.5 * (2 - 3) + 4^0.5\n";
 	public static final String START = "Welcome to the program for calculating equations.\n";
 
@@ -31,7 +33,6 @@ public class Application {
 	private static Logger log = Logger.getLogger(Application.class);
 
 	static Scanner scanner = new Scanner(System.in);
-	static boolean active = true;
 	public static boolean console = false;
 
 	public static void main(String[] args) {
@@ -40,7 +41,7 @@ public class Application {
 		if (args.length > 0 && args[0].equalsIgnoreCase("console")) {
 			console = true;
 			System.out.println(START);
-			while (active) {
+			while (console) {
 				System.out.print("Enter the equation: ");
 				text = scanner.nextLine().trim();
 
@@ -52,31 +53,32 @@ public class Application {
 	}
 
 	public static String textAnalysis(String text) {
-		switch (text) {
-		case "help":
+		if (text.matches("help")) {
 			return HELP;
-		case "exit":
-			active = false;
+		}
+		if (text.matches("exit")) {
 			scanner.close();
-			return "";
-		case "point":
-			if (console) {
-			System.out.print("Enter the number of digits after the decimal point: ");
-			WriterImpl.numbersAfterTheDecimalPoint = Integer.parseInt(scanner.nextLine().trim());
-			return "The number of decimal places is set to " + WriterImpl.numbersAfterTheDecimalPoint + ".\n";
-			} else {
-				return "Sorry. This command don't work without console. =(";
-			}
-		case "more on":
-			SolverImpl.detailedSolution = true;
-			return "Detailed solution included.\n";
-		case "more off":
-			SolverImpl.detailedSolution = false;
-			return "Detailed solution is off.\n";
-		default:
-			getAnswer(text);
+			System.exit(1);
 			return "";
 		}
+		if (text.matches("more on")) {
+			SolverImpl.detailedSolution = true;
+			return "Detailed solution included.\n";
+		}
+		if (text.matches("more off")) {
+			SolverImpl.detailedSolution = false;
+			return "Detailed solution is off.\n";
+		}
+		if (text.matches("point\\s\\d+")) {
+			Matcher matcher = Pattern.compile("\\d+").matcher(text);
+			if (matcher.find()) {
+				Integer pointNumber = Integer.valueOf(matcher.group());
+				WriterImpl.numbersAfterTheDecimalPoint = pointNumber;
+			}
+			return "The number of decimal places is set to " + WriterImpl.numbersAfterTheDecimalPoint + ".\n";
+		}
+		getAnswer(text);
+		return "";
 	}
 
 	public static double getAnswer(String text) {
@@ -91,13 +93,13 @@ public class Application {
 			if (console) {
 				System.out.println(answerText);
 			} else {
-				ViewConsoleSwing.addConsoleLine(answerText);
+				ViewConsoleSwing.println(answerText);
 			}
 		} catch (InvalidCharacterException | ConflictOfOperationsException | SubEquationException | WriteException
 				| NumberFormatException e) {
 			log.error(e);
 			if (!console) {
-				ViewConsoleSwing.addConsoleLine(e.toString());
+				ViewConsoleSwing.println(e.toString());
 			}
 		}
 

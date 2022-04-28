@@ -13,6 +13,9 @@ import com.commandoby.stringCalculator.service.Writer;
 import com.commandoby.stringCalculator.swing.ViewConsoleSwing;
 
 public class SolverImpl implements Solver {
+	private Writer writer = new WriterImpl();
+	private Logger log = Logger.getLogger(getClass());
+	
 	public static boolean detailedSolution = false;
 	private static Operand staticOperand = null;
 
@@ -50,7 +53,7 @@ public class SolverImpl implements Solver {
 			for (int j = 1; j < operand.getOperandList().size(); j++) {
 				if (operand.getOperandList().get(j).getOperation().equals(Operation.values()[i])) {
 					solveOperand(operand, Operation.values()[i], j);
-					j = 1;
+					j = 0;
 				}
 			}
 		}
@@ -70,9 +73,6 @@ public class SolverImpl implements Solver {
 	}
 
 	private void descriptionSolution(Operand operandFirst, Operand operandSecond, double result) {
-		Writer writer = new WriterImpl();
-		Logger log = Logger.getLogger(getClass());
-
 		try {
 			Operand operand = new Operand(null, 0, new ArrayList<Operand>());
 			operand.getOperandList().add(operandFirst);
@@ -84,7 +84,7 @@ public class SolverImpl implements Solver {
 			if (Application.console) {
 				System.out.println(detailedSolutionText);
 			} else {
-				ViewConsoleSwing.addConsoleLine(detailedSolutionText);
+				ViewConsoleSwing.println(detailedSolutionText);
 			}
 		} catch (WriteException e) {
 			log.error(e);
