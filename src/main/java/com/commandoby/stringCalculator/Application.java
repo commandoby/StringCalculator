@@ -77,19 +77,18 @@ public class Application {
 			}
 			return "The number of decimal places is set to " + WriterImpl.numbersAfterTheDecimalPoint + ".\n";
 		}
-		getAnswer(text);
+		processAnswer(text);
 		return "";
 	}
 
-	public static double getAnswer(String text) {
+	private static void processAnswer(String text) {
 		double answer = 0;
 
 		try {
-			Operand operand = new Operand(null, 0, reader.read(text));
-			String equation = writer.write(operand);
-			answer = solver.solve(operand);
+			answer = getAnswer(text);
 
-			String answerText = equation + " = " + writer.writeOperandNumber(answer);
+			Operand operand = new Operand(null, 0, reader.read(text));
+			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			if (console) {
 				System.out.println(answerText);
 			} else {
@@ -102,7 +101,11 @@ public class Application {
 				ViewConsoleSwing.println(e.toString());
 			}
 		}
+	}
 
-		return answer;
+	static double getAnswer(String text)
+			throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+		Operand operand = new Operand(null, 0, reader.read(text));
+		return solver.solve(operand);
 	}
 }
