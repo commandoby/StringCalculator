@@ -1,4 +1,4 @@
-FROM openjdk:16.0.1-jdk
+FROM openjdk:8-jdk
 ARG jar_file
-COPY target/StringCalculator-1.00-SNAPSHOT.jar /StringCalculator-1.00-SNAPSHOT.jar
-ENTRYPOINT ["java", "-jar", "StringCalculator-1.00-SNAPSHOT.jar"]
+COPY target/StringCalculator-1.01-SNAPSHOT.jar /StringCalculator-1.01-SNAPSHOT.jar
+ENTRYPOINT ["java", "-jar", "StringCalculator-1.01-SNAPSHOT.jar", "console"]

@@ -79,8 +79,8 @@ public class SolverImpl implements Solver {
 			operand.getOperandList().add(operandSecond);
 			operand.getOperandList().get(0).setOperation(null);
 
-			String detailedSolutionText = "  [" + writer.write(operand) + " = " + writer.writeOperandNumber(result)
-					+ "] " + writer.write(staticOperand);
+			String detailedSolutionText = "[" + writer.write(operand) + " = " + writer.writeOperandNumber(result)
+					+ "]  " + writer.write(staticOperand);
 			if (Application.console) {
 				System.out.println(detailedSolutionText);
 			} else {

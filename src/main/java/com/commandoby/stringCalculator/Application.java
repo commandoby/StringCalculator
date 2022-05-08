@@ -36,7 +36,7 @@ public class Application {
 	public static boolean console = false;
 
 	public static void main(String[] args) {
-		String text;
+		String text = null;
 
 		if (args.length > 0 && args[0].equalsIgnoreCase("console")) {
 			console = true;
