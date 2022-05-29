@@ -2,8 +2,6 @@ package com.commandoby.stringCalculator.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.ArrayList;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,74 +21,74 @@ public class WriterTests {
 
 	@Test
 	public void writer_Test1() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0, new ArrayList<Operand>());
-		expectedOperand.getOperandList().add(new Operand(null, -1, null));
+		Operand expectedOperand = new Operand(null, 0);
+		expectedOperand.add(new Operand(null, -1));
 
 		assertEquals(writer.write(expectedOperand), "-1");
 	}
 
 	@Test
 	public void writer_Test2() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0, new ArrayList<Operand>());
-		expectedOperand.getOperandList().add(new Operand(null, 2, null));
-		expectedOperand.getOperandList().add(new Operand(Operation.ADD, 2, null));
+		Operand expectedOperand = new Operand(null, 0);
+		expectedOperand.add(new Operand(null, 2));
+		expectedOperand.add(new Operand(Operation.ADD, 2));
 
 		assertEquals(writer.write(expectedOperand), "2 + 2");
 	}
 
 	@Test
 	public void writer_Test3() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0, new ArrayList<Operand>());
-		expectedOperand.getOperandList().add(new Operand(null, 2, null));
-		expectedOperand.getOperandList().add(new Operand(Operation.SUBTRACT, -2, null));
+		Operand expectedOperand = new Operand(null, 0);
+		expectedOperand.add(new Operand(null, 2));
+		expectedOperand.add(new Operand(Operation.SUBTRACT, -2));
 
 		assertEquals(writer.write(expectedOperand), "2 - -2");
 	}
 
 	@Test
 	public void writer_Test4() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0, new ArrayList<Operand>());
-		expectedOperand.getOperandList().add(new Operand(null, 2, null));
-		expectedOperand.getOperandList().add(new Operand(Operation.ADD, 2, null));
-		expectedOperand.getOperandList().add(new Operand(Operation.MULTIPLY, 2, null));
+		Operand expectedOperand = new Operand(null, 0);
+		expectedOperand.add(new Operand(null, 2));
+		expectedOperand.add(new Operand(Operation.ADD, 2));
+		expectedOperand.add(new Operand(Operation.MULTIPLY, 2));
 
 		assertEquals(writer.write(expectedOperand), "2 + 2 * 2");
 	}
 
 	@Test
 	public void writer_Test5() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0, new ArrayList<Operand>());
-		expectedOperand.getOperandList().add(new Operand(null, 0, new ArrayList<Operand>()));
-		expectedOperand.getOperandList().get(0).getOperandList().add(new Operand(null, 2, null));
-		expectedOperand.getOperandList().get(0).getOperandList().add(new Operand(Operation.ADD, 2, null));
-		expectedOperand.getOperandList().add(new Operand(Operation.MULTIPLY, 2, null));
+		Operand expectedOperand = new Operand(null, 0);
+		expectedOperand.add(new Operand(null, 0));
+		expectedOperand.get(0).add(new Operand(null, 2));
+		expectedOperand.get(0).add(new Operand(Operation.ADD, 2));
+		expectedOperand.add(new Operand(Operation.MULTIPLY, 2));
 
 		assertEquals(writer.write(expectedOperand), "(2 + 2) * 2");
 	}
 
 	@Test
 	public void writer_Test6() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0, new ArrayList<Operand>());
-		expectedOperand.getOperandList().add(new Operand(null, 2, null));
-		expectedOperand.getOperandList().add(new Operand(Operation.SUBTRACT, 2, null));
+		Operand expectedOperand = new Operand(null, 0);
+		expectedOperand.add(new Operand(null, 2));
+		expectedOperand.add(new Operand(Operation.SUBTRACT, 2));
 
 		assertEquals(writer.write(expectedOperand), "2 - 2");
 	}
 
 	@Test
 	public void writer_Test7() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0, new ArrayList<Operand>());
-		expectedOperand.getOperandList().add(new Operand(null, 2, null));
-		expectedOperand.getOperandList().add(new Operand(Operation.DIVIDE, 2, null));
+		Operand expectedOperand = new Operand(null, 0);
+		expectedOperand.add(new Operand(null, 2));
+		expectedOperand.add(new Operand(Operation.DIVIDE, 2));
 
 		assertEquals(writer.write(expectedOperand), "2 / 2");
 	}
 
 	@Test
 	public void writer_Test8() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0, new ArrayList<Operand>());
-		expectedOperand.getOperandList().add(new Operand(null, 2, null));
-		expectedOperand.getOperandList().add(new Operand(Operation.EXPONENTIETION, 3, null));
+		Operand expectedOperand = new Operand(null, 0);
+		expectedOperand.add(new Operand(null, 2));
+		expectedOperand.add(new Operand(Operation.EXPONENTIETION, 3));
 
 		assertEquals(writer.write(expectedOperand), "2^3");
 	}

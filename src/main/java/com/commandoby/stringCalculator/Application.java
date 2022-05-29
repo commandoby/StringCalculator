@@ -87,7 +87,8 @@ public class Application {
 		try {
 			answer = getAnswer(text);
 
-			Operand operand = new Operand(null, 0, reader.read(text));
+			Operand operand = new Operand(null, 0);
+			operand.addAll(reader.read(text));
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			if (console) {
 				System.out.println(answerText);
@@ -105,7 +106,8 @@ public class Application {
 
 	static double getAnswer(String text)
 			throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
-		Operand operand = new Operand(null, 0, reader.read(text));
+		Operand operand = new Operand(null, 0);
+		operand.addAll(reader.read(text));
 		return solver.solve(operand);
 	}
 }

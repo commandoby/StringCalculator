@@ -15,7 +15,7 @@ import com.commandoby.stringCalculator.service.Reader;
 import static com.commandoby.stringCalculator.enums.Operation.*;
 
 public class ReaderImpl implements Reader {
-	private Operand inclusiveOperand = new Operand(null, 0, null);
+	private Operand inclusiveOperand = new Operand(null, 0);
 	boolean negative = false;
 
 	@Override
@@ -36,13 +36,13 @@ public class ReaderImpl implements Reader {
 			if (sumbol.matches("\\d")) {
 				i = readNumber(text, i) - 1;
 				operandList.add(inclusiveOperand);
-				inclusiveOperand = new Operand(null, 0, null);
+				inclusiveOperand = new Operand(null, 0);
 				continue;
 			}
 			if (sumbol.matches("(\\(|\\[|\\{)")) {
 				i = readSubEquation(text, i + 1);
 				operandList.add(inclusiveOperand);
-				inclusiveOperand = new Operand(null, 0, null);
+				inclusiveOperand = new Operand(null, 0);
 				continue;
 			}
 			if (sumbol.matches("(\\)|\\]|\\})")) {
@@ -52,7 +52,7 @@ public class ReaderImpl implements Reader {
 		}
 
 		if (operandList.get(0).getOperation() != null && operandList.get(0).getOperation().equals(SUBTRACT)
-				&& operandList.get(0).getOperandNumber() > 0 && operandList.get(0).getOperandList() == null) {
+				&& operandList.get(0).getOperandNumber() > 0 && operandList.get(0).size() == 0) {
 			operandList.get(0).setOperandNumber(operandList.get(0).getOperandNumber() * (-1));
 			operandList.get(0).setOperation(null);
 		}
@@ -127,7 +127,7 @@ public class ReaderImpl implements Reader {
 			}
 			if (sumbol.matches("(\\)|\\]|\\})")) {
 				if (subEquationLevel == 0) {
-					inclusiveOperand.setOperandList(reader.read(text.substring(startPoint, i)));
+					inclusiveOperand.addAll(reader.read(text.substring(startPoint, i)));
 					return i;
 				} else {
 					subEquationLevel--;

@@ -27,7 +27,7 @@ public class ReaderTests {
 	@Test
 	public void reader_Test1() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, -1, null));
+		expected.add(new Operand(null, -1));
 
 		List<Operand> actual = reader.read("-1");
 		assertEquals(expected, actual);
@@ -36,7 +36,7 @@ public class ReaderTests {
 	@Test
 	public void reader_Test2() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 10, null));
+		expected.add(new Operand(null, 10));
 		
 		List<Operand> actual = reader.read("   10   ");
 		assertEquals(expected, actual);
@@ -45,8 +45,8 @@ public class ReaderTests {
 	@Test
 	public void reader_Test3() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 1, null));
-		expected.add(new Operand(Operation.ADD, 2, null));
+		expected.add(new Operand(null, 1));
+		expected.add(new Operand(Operation.ADD, 2));
 		
 		List<Operand> actual = reader.read("1 + 2");
 		assertEquals(expected, actual);
@@ -55,9 +55,9 @@ public class ReaderTests {
 	@Test
 	public void reader_Test4() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 2, null));
-		expected.add(new Operand(Operation.ADD, 2, null));
-		expected.add(new Operand(Operation.MULTIPLY, 2, null));
+		expected.add(new Operand(null, 2));
+		expected.add(new Operand(Operation.ADD, 2));
+		expected.add(new Operand(Operation.MULTIPLY, 2));
 		
 		List<Operand> actual = reader.read("2+2*2");
 		assertEquals(expected, actual);
@@ -66,10 +66,10 @@ public class ReaderTests {
 	@Test
 	public void reader_Test5() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 0, new ArrayList<Operand>()));
-		expected.get(0).getOperandList().add(new Operand(null, 2, null));
-		expected.get(0).getOperandList().add(new Operand(Operation.ADD, 2, null));
-		expected.add(new Operand(Operation.MULTIPLY, 2, null));
+		expected.add(new Operand(null, 0));
+		expected.get(0).add(new Operand(null, 2));
+		expected.get(0).add(new Operand(Operation.ADD, 2));
+		expected.add(new Operand(Operation.MULTIPLY, 2));
 		
 		List<Operand> actual = reader.read("(2+2)*2");
 		assertEquals(expected, actual);
@@ -78,12 +78,12 @@ public class ReaderTests {
 	@Test
 	public void reader_Test6() throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 0, new ArrayList<Operand>()));
-		expected.get(0).getOperandList().add(new Operand(null, 2, null));
-		expected.get(0).getOperandList().add(new Operand(Operation.DIVIDE, 0, new ArrayList<Operand>()));
-		expected.get(0).getOperandList().get(1).getOperandList().add(new Operand(null, 2, null));
-		expected.get(0).getOperandList().get(1).getOperandList().add(new Operand(Operation.ADD, 2, null));
-		expected.add(new Operand(Operation.EXPONENTIETION, 2, null));
+		expected.add(new Operand(null, 0));
+		expected.get(0).add(new Operand(null, 2));
+		expected.get(0).add(new Operand(Operation.DIVIDE, 0));
+		expected.get(0).get(1).add(new Operand(null, 2));
+		expected.get(0).get(1).add(new Operand(Operation.ADD, 2));
+		expected.add(new Operand(Operation.EXPONENTIETION, 2));
 		
 		List<Operand> actual = reader.read("(2/(2+2))^2");
 		assertEquals(expected, actual);

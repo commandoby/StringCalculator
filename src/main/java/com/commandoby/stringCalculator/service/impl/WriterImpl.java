@@ -13,13 +13,13 @@ public class WriterImpl implements Writer {
 		Writer writer = new WriterImpl();
 		StringBuilder sb = new StringBuilder();
 
-		for (int i = 0; i < operand.getOperandList().size(); i++) {
-			Operand subOperand = operand.getOperandList().get(i);
+		for (int i = 0; i < operand.size(); i++) {
+			Operand subOperand = operand.get(i);
 
 			if (subOperand.getOperation() != null) {
 				sb.append(writeOperation(subOperand.getOperation()));
 			}
-			if (subOperand.getOperandList() == null) {
+			if (subOperand.size() == 0) {
 				sb.append(writeOperandNumber(subOperand.getOperandNumber()));
 			} else {
 				sb.append("(" + writer.write(subOperand) + ")");

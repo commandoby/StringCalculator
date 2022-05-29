@@ -1,19 +1,17 @@
 package com.commandoby.stringCalculator.components;
 
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Objects;
 
 import com.commandoby.stringCalculator.enums.Operation;
 
-public class Operand {
+public class Operand extends LinkedList<Operand> {
 	Operation operation;
 	double operandNumber;
-	List<Operand> operandList;
 
-	public Operand(Operation operation, double operandNumber, List<Operand> operandList) {
+	public Operand(Operation operation, double operandNumber) {
 		this.operation = operation;
 		this.operandNumber = operandNumber;
-		this.operandList = operandList;
 	}
 
 	public Operation getOperation() {
@@ -32,47 +30,41 @@ public class Operand {
 		this.operandNumber = operandNumber;
 	}
 
-	public List<Operand> getOperandList() {
-		return operandList;
-	}
-
-	public void setOperandList(List<Operand> operandList) {
-		this.operandList = operandList;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(operandList, operandNumber, operation);
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(operandNumber, operation);
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		Operand other = (Operand) obj;
-		return Objects.equals(operandList, other.operandList)
-				&& Double.doubleToLongBits(operandNumber) == Double.doubleToLongBits(other.operandNumber)
+		return Double.doubleToLongBits(operandNumber) == Double.doubleToLongBits(other.operandNumber)
 				&& operation == other.operation;
 	}
 
 	@Override
 	public String toString() {
-		return "Operand [operation=" + operation + ", operandNumber=" + operandNumber + ", operandList=" + operandList
-				+ "]";
+		return "Operand [operation=" + operation + ", operandNumber=" + operandNumber + ", getFirst()=" + getFirst()
+				+ ", getLast()=" + getLast() + ", size()=" + size() + "]";
 	}
 
 	public Operand clone() {
-		Operand operand = new Operand(null, 0, null);
+		Operand operand = new Operand(null, 0/* , null */);
 
 		if (this.operation != null) {
 			operand.setOperation(this.operation);
 		}
-		if (this.operandList != null) {
-			operand.setOperandList(this.operandList);
+		if (super.size() > 0) {
+			operand.addAll(this.subList(0, this.size()));
 		} else {
 			operand.setOperandNumber(this.operandNumber);
 		}

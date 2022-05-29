@@ -37,24 +37,24 @@ public class SolverImpl implements Solver {
 	public double solve(Operand operand) {
 		Solver solver = new SolverImpl();
 
-		if (staticOperand == null || staticOperand.getOperandList() == null) {
+		if (staticOperand == null || staticOperand.size() == 0) {
 			staticOperand = operand;
 		}
 
-		if (operand.getOperandList() != null) {
-			for (int i = 0; i < operand.getOperandList().size(); i++) {
-				if (operand.getOperandList().get(i).getOperandList() != null) {
-					operand.getOperandList().get(i).setOperandNumber(solver.solve(operand.getOperandList().get(i)));
-					operand.getOperandList().get(i).setOperandList(null);
+		if (operand.size() > 0) {
+			for (int i = 0; i < operand.size(); i++) {
+				if (operand.get(i).size() > 0) {
+					operand.get(i).setOperandNumber(solver.solve(operand.get(i)));
+					operand.get(i).clear();;
 				}
 			}
 
-			while (operand.getOperandList().size() > 1) {
+			while (operand.size() > 1) {
 				solverLoop(operand);
 			}
 
-			operand.setOperandNumber(operand.getOperandList().get(0).getOperandNumber());
-			operand.setOperandList(null);
+			operand.setOperandNumber(operand.get(0).getOperandNumber());
+			operand.clear();;
 		} else {
 			return operand.getOperandNumber();
 		}
@@ -64,9 +64,9 @@ public class SolverImpl implements Solver {
 
 	private void solverLoop(Operand operand) {
 		for (int i = 0; i < operationPriority.size(); i++) {
-			for (int j = 1; j < operand.getOperandList().size(); j++) {
+			for (int j = 1; j < operand.size(); j++) {
 				for (int k = 0; k < operationPriority.get(i).size(); k++) {
-					if (operand.getOperandList().get(j).getOperation().equals(operationPriority.get(i).get(k))) {
+					if (operand.get(j).getOperation().equals(operationPriority.get(i).get(k))) {
 						solveOperand(operand, operationPriority.get(i).get(k), j);
 						j = 0;
 						break;
@@ -77,12 +77,12 @@ public class SolverImpl implements Solver {
 	}
 
 	private void solveOperand(Operand operand, Operation operation, int operandNumber) {
-		Operand operandFirst = operand.getOperandList().get(operandNumber - 1).clone();
-		Operand operandSecond = operand.getOperandList().get(operandNumber).clone();
+		Operand operandFirst = operand.get(operandNumber - 1).clone();
+		Operand operandSecond = operand.get(operandNumber).clone();
 		double opernadNumberResult = operation.action(operandFirst.getOperandNumber(),
 				operandSecond.getOperandNumber());
-		operand.getOperandList().get(operandNumber - 1).setOperandNumber(opernadNumberResult);
-		operand.getOperandList().remove(operandNumber);
+		operand.get(operandNumber - 1).setOperandNumber(opernadNumberResult);
+		operand.remove(operandNumber);
 
 		if (detailedSolution) {
 			descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
@@ -91,10 +91,10 @@ public class SolverImpl implements Solver {
 
 	private void descriptionSolution(Operand operandFirst, Operand operandSecond, double result) {
 		try {
-			Operand operand = new Operand(null, 0, new ArrayList<Operand>());
-			operand.getOperandList().add(operandFirst);
-			operand.getOperandList().add(operandSecond);
-			operand.getOperandList().get(0).setOperation(null);
+			Operand operand = new Operand(null, 0);
+			operand.add(operandFirst);
+			operand.add(operandSecond);
+			operand.get(0).setOperation(null);
 
 			String detailedSolutionText = "[" + writer.write(operand) + " = " + writer.writeOperandNumber(result)
 					+ "]  " + writer.write(staticOperand);
