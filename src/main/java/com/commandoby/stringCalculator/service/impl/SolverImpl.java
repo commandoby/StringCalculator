@@ -11,7 +11,6 @@ import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.WriteException;
 import com.commandoby.stringCalculator.service.Solver;
 import com.commandoby.stringCalculator.service.Writer;
-import com.commandoby.stringCalculator.swing.ViewConsoleSwing;
 
 public class SolverImpl implements Solver {
 	private Writer writer = new WriterImpl();
@@ -45,7 +44,8 @@ public class SolverImpl implements Solver {
 			for (int i = 0; i < operand.size(); i++) {
 				if (operand.get(i).size() > 0) {
 					operand.get(i).setOperandNumber(solver.solve(operand.get(i)));
-					operand.get(i).clear();;
+					operand.get(i).clear();
+					;
 				}
 			}
 
@@ -54,7 +54,8 @@ public class SolverImpl implements Solver {
 			}
 
 			operand.setOperandNumber(operand.get(0).getOperandNumber());
-			operand.clear();;
+			operand.clear();
+			;
 		} else {
 			return operand.getOperandNumber();
 		}
@@ -98,11 +99,7 @@ public class SolverImpl implements Solver {
 
 			String detailedSolutionText = "[" + writer.write(operand) + " = " + writer.writeOperandNumber(result)
 					+ "]  " + writer.write(staticOperand);
-			if (Application.console) {
-				System.out.println(detailedSolutionText);
-			} else {
-				ViewConsoleSwing.println(detailedSolutionText);
-			}
+			Application.print(detailedSolutionText + "\n");
 		} catch (WriteException e) {
 			log.error(e);
 		}

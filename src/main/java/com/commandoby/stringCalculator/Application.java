@@ -31,14 +31,15 @@ public class Application {
 	private static Solver solver = new SolverImpl();
 	private static Writer writer = new WriterImpl();
 	private static Logger log = Logger.getLogger(Application.class);
-
-	static Scanner scanner = new Scanner(System.in);
+	private static Scanner scanner = new Scanner(System.in);
+	
 	public static boolean console = false;
+	public static String consoleText = START + "\n";
 
 	public static void main(String[] args) {
-		String text = null;
 
-		if (args.length > 0 && args[0].equalsIgnoreCase("console")) {
+		if (console || args.length > 0 && args[0].equalsIgnoreCase("console")) {
+			String text = null;
 			console = true;
 			System.out.println(START);
 			while (console) {
@@ -90,17 +91,11 @@ public class Application {
 			Operand operand = new Operand(null, 0);
 			operand.addAll(reader.read(text));
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
-			if (console) {
-				System.out.println(answerText);
-			} else {
-				ViewConsoleSwing.println(answerText);
-			}
+			print(answerText + "\n");
 		} catch (InvalidCharacterException | ConflictOfOperationsException | SubEquationException | WriteException
 				| NumberFormatException e) {
 			log.error(e);
-			if (!console) {
-				ViewConsoleSwing.println(e.toString());
-			}
+			printOnlySwing(e.toString() + "\n");
 		}
 	}
 
@@ -109,5 +104,21 @@ public class Application {
 		Operand operand = new Operand(null, 0);
 		operand.addAll(reader.read(text));
 		return solver.solve(operand);
+	}
+
+	public static void print(String text) {
+		consoleText += text;
+		if (console) {
+			System.out.print(text);
+		} else {
+			ViewConsoleSwing.print();
+		}
+	}
+	
+	public static void printOnlySwing(String text) {
+		consoleText += text;
+		if (!console) {
+			ViewConsoleSwing.print();
+		}
 	}
 }

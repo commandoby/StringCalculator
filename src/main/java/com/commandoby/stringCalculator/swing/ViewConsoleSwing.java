@@ -26,12 +26,12 @@ public class ViewConsoleSwing implements Runnable, ActionListener {
 		frame.setVisible(true);
 
 		addComponents();
-		println(Application.START);
 	}
 
 	private void addComponents() {
 		textArea = new JTextArea();
 		textArea.setEditable(false);
+		textArea.setText(Application.consoleText);
 		frame.add(new JScrollPane(textArea));
 
 		JPanel downPanel = new JPanel(new BorderLayout());
@@ -45,18 +45,14 @@ public class ViewConsoleSwing implements Runnable, ActionListener {
 		frame.add(downPanel, BorderLayout.SOUTH);
 	}
 
-	public static void println(String text) {
-		print(text + "\n");
-	}
-
-	public static void print(String text) {
-		textArea.append(text);
+	public static void print() {
+		textArea.setText(Application.consoleText);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("enterField")) {
-			println(Application.textAnalysis(enterField.getText()));
+			Application.print(Application.textAnalysis(enterField.getText()) + "\n");
 			enterField.setText("");
 		}
 	}
