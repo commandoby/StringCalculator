@@ -1,5 +1,7 @@
 package com.commandoby.stringCalculator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,6 +37,7 @@ public class Application {
 	
 	public static boolean console = false;
 	public static String consoleText = START + "\n";
+	public static List<String> consoleListHistory = new ArrayList<>();
 
 	public static void main(String[] args) {
 
