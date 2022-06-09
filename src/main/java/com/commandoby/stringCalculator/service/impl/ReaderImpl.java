@@ -39,13 +39,13 @@ public class ReaderImpl implements Reader {
 				inclusiveOperand = new Operand(null, 0);
 				continue;
 			}
-			if (sumbol.matches("(\\(|\\[|\\{)")) {
+			if (sumbol.matches("\\(")) {
 				i = readSubEquation(text, i + 1);
 				operandList.add(inclusiveOperand);
 				inclusiveOperand = new Operand(null, 0);
 				continue;
 			}
-			if (sumbol.matches("(\\)|\\]|\\})")) {
+			if (sumbol.matches("\\)")) {
 				throw new SubEquationException("Missing opening bracket.");
 			}
 			throw new InvalidCharacterException("Invalid character: " + sumbol);
@@ -122,10 +122,10 @@ public class ReaderImpl implements Reader {
 		for (int i = startPoint; i < text.length(); i++) {
 			String sumbol = text.substring(i, i + 1);
 
-			if (sumbol.matches("(\\(|\\[|\\{)")) {
+			if (sumbol.matches("\\(")) {
 				subEquationLevel++;
 			}
-			if (sumbol.matches("(\\)|\\]|\\})")) {
+			if (sumbol.matches("\\)")) {
 				if (subEquationLevel == 0) {
 					inclusiveOperand.addAll(reader.read(text.substring(startPoint, i)));
 					return i;

@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,7 +19,7 @@ public class ViewConsoleSwing implements Runnable {
 	private JFrame frame;
 	private JTextField enterField;
 	private static JTextArea textArea;
-	
+
 	private int consoleListHistoryNumber = 0;
 
 	private ActionListener actionListener = new ActionListener() {
@@ -29,26 +28,27 @@ public class ViewConsoleSwing implements Runnable {
 			if (e.getActionCommand().equals("enterField")) {
 				Application.consoleListHistory.add(enterField.getText());
 				consoleListHistoryNumber = Application.consoleListHistory.size();
+				Application.printOnlySwing("You entered: " + enterField.getText() + "\n");
 				Application.print(Application.textAnalysis(enterField.getText()) + "\n");
 				enterField.setText("");
 			}
 		}
 	};
-	
+
 	private KeyAdapter keyListener = new KeyAdapter() {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if (e.getKeyCode() == 38) {
+			if (e.getKeyCode() == 38 || e.getKeyCode() == 33) {
 				if (consoleListHistoryNumber > 0) {
 					enterField.setText(Application.consoleListHistory.get(--consoleListHistoryNumber));
 				}
 			}
-			if (e.getKeyCode() == 40) {
-				if (consoleListHistoryNumber >= Application.consoleListHistory.size()-1) {
+			if (e.getKeyCode() == 40 || e.getKeyCode() == 34) {
+				if (consoleListHistoryNumber >= Application.consoleListHistory.size() - 1) {
 					consoleListHistoryNumber = Application.consoleListHistory.size();
 					enterField.setText("");
 				}
-				if (consoleListHistoryNumber < Application.consoleListHistory.size()-1) {
+				if (consoleListHistoryNumber < Application.consoleListHistory.size() - 1) {
 					enterField.setText(Application.consoleListHistory.get(++consoleListHistoryNumber));
 				}
 			}

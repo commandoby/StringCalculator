@@ -11,21 +11,15 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 import com.commandoby.stringCalculator.components.Operand;
-import com.commandoby.stringCalculator.exceptions.ConflictOfOperationsException;
-import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
-import com.commandoby.stringCalculator.exceptions.SubEquationException;
-import com.commandoby.stringCalculator.exceptions.WriteException;
-import com.commandoby.stringCalculator.service.Reader;
-import com.commandoby.stringCalculator.service.Solver;
-import com.commandoby.stringCalculator.service.Writer;
-import com.commandoby.stringCalculator.service.impl.ReaderImpl;
-import com.commandoby.stringCalculator.service.impl.SolverImpl;
-import com.commandoby.stringCalculator.service.impl.WriterImpl;
+import com.commandoby.stringCalculator.exceptions.*;
+import com.commandoby.stringCalculator.service.*;
+import com.commandoby.stringCalculator.service.impl.*;
 import com.commandoby.stringCalculator.swing.ViewConsoleSwing;
 
 public class Application {
-	private static final String HELP = "exit - complete the program;\n" + "help - help for valid commands;\n"
-			+ "point (n) - numbers after the decimal point (Default: 2);\n" + "more on/more off - Detailed solution.\n"
+	private static final String HELP = "Commands:\n" + "exit - complete the program;\n"
+			+ "help - help for valid commands;\n" + "point (n) - numbers after the decimal point (Default: 2);\n"
+			+ "more on/more off - Detailed solution.\n\n" + "Correct characters: + - * / ( ).\n\n"
 			+ "Example: 1.5 * (2 - 3) + 4^0.5\n";
 	public static final String START = "Welcome to the program for calculating equations.\n";
 
@@ -34,7 +28,7 @@ public class Application {
 	private static Writer writer = new WriterImpl();
 	private static Logger log = Logger.getLogger(Application.class);
 	private static Scanner scanner = new Scanner(System.in);
-	
+
 	public static boolean console = false;
 	public static String consoleText = START + "\n";
 	public static List<String> consoleListHistory = new ArrayList<>();
@@ -117,7 +111,7 @@ public class Application {
 			ViewConsoleSwing.print();
 		}
 	}
-	
+
 	public static void printOnlySwing(String text) {
 		consoleText += text;
 		if (!console) {
