@@ -1,11 +1,13 @@
 package com.commandoby.stringCalculator.components;
 
-import java.util.LinkedList;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import com.commandoby.stringCalculator.enums.Operation;
 
-public class Operand extends LinkedList<Operand> {
+public class Operand extends ArrayList<Operand> implements Serializable {
+	private static final long serialVersionUID = 1L;
 	Operation operation;
 	double operandNumber;
 
@@ -53,12 +55,11 @@ public class Operand extends LinkedList<Operand> {
 
 	@Override
 	public String toString() {
-		return "Operand [operation=" + operation + ", operandNumber=" + operandNumber + ", getFirst()=" + getFirst()
-				+ ", getLast()=" + getLast() + ", size()=" + size() + "]";
+		return "Operand [operation=" + operation + ", operandNumber=" + operandNumber + ", size()=" + size() + "]";
 	}
 
 	public Operand clone() {
-		Operand operand = new Operand(null, 0/* , null */);
+		Operand operand = new Operand(null, 0);
 
 		if (this.operation != null) {
 			operand.setOperation(this.operation);
