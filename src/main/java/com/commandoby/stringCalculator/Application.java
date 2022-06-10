@@ -21,7 +21,7 @@ public class Application {
 			+ "help - help for valid commands;\n" + "point (n) - numbers after the decimal point (Default: 2);\n"
 			+ "more on/more off - Detailed solution.\n\n" + "Correct characters: + - * / ( ).\n\n"
 			+ "Example: 1.5 * (2 - 3) + 4^0.5\n";
-	public static final String START = "Welcome to the program for calculating equations.\n";
+	public static final String START = "Welcome to the program for calculating equations. v1.02\n";
 
 	private static Reader reader = new ReaderImpl();
 	private static Solver solver = new SolverImpl();
