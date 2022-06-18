@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>StringCalculator</groupId>
   <artifactId>StringCalculator</artifactId>
-  <version>1.01-SNAPSHOT</version>
+  <version>1.02-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -46,7 +46,7 @@
     </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 </project>

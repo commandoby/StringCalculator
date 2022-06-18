@@ -1,7 +1,9 @@
 package com.commandoby.stringCalculator.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +19,15 @@ import static com.commandoby.stringCalculator.enums.Operation.*;
 public class ReaderImpl implements Reader {
 	private Operand inclusiveOperand = new Operand(null, 0);
 	boolean negative = false;
+	public static final Map<Operation, String> symbolsOfOperations = new HashMap<>();
+	
+	{
+		symbolsOfOperations.put(ADD, " + ");
+		symbolsOfOperations.put(SUBTRACT, " - ");
+		symbolsOfOperations.put(MULTIPLY, " * ");
+		symbolsOfOperations.put(DIVIDE, " / ");
+		symbolsOfOperations.put(EXPONENTIETION, "^");
+	}
 
 	@Override
 	public List<Operand> read(String text)
@@ -59,26 +70,14 @@ public class ReaderImpl implements Reader {
 		return operandList;
 	}
 
-	private void readOperation(String sumbol) throws InvalidCharacterException, ConflictOfOperationsException {
-		switch (sumbol) {
-		case "+":
-			checkAndSetOperation(ADD);
-			break;
-		case "-":
-			checkAndSetOperation(SUBTRACT);
-			break;
-		case "*":
-			checkAndSetOperation(MULTIPLY);
-			break;
-		case "/":
-			checkAndSetOperation(DIVIDE);
-			break;
-		case "^":
-			checkAndSetOperation(EXPONENTIETION);
-			break;
-		default:
-			throw new InvalidCharacterException("Invalid character: " + sumbol);
+	private void readOperation(String symbol) throws InvalidCharacterException, ConflictOfOperationsException {
+		for (Map.Entry<Operation, String> entrySymbol: symbolsOfOperations.entrySet()) {
+			if (entrySymbol.getValue().trim().equals(symbol)) {
+				checkAndSetOperation(entrySymbol.getKey());
+				return;
+			}
 		}
+		throw new InvalidCharacterException("Invalid character: " + symbol);
 	}
 
 	private void checkAndSetOperation(Operation operation) throws ConflictOfOperationsException {

@@ -1,8 +1,5 @@
 package com.commandoby.stringCalculator.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
 import com.commandoby.stringCalculator.Application;
@@ -18,19 +15,9 @@ public class SolverImpl implements Solver {
 
 	public static boolean detailedSolution = false;
 	private static Operand staticOperand = null;
-
-	private List<List<Operation>> operationPriority = new ArrayList<>();
-
-	{
-		while (operationPriority.size() < 3) {
-			operationPriority.add(new ArrayList<Operation>());
-		}
-		operationPriority.get(0).add(Operation.EXPONENTIETION);
-		operationPriority.get(1).add(Operation.MULTIPLY);
-		operationPriority.get(1).add(Operation.DIVIDE);
-		operationPriority.get(2).add(Operation.ADD);
-		operationPriority.get(2).add(Operation.SUBTRACT);
-	}
+	
+	Operation[][] operationPriority = new Operation[][] { { Operation.EXPONENTIETION },
+			{ Operation.MULTIPLY, Operation.DIVIDE }, { Operation.ADD, Operation.SUBTRACT } };
 
 	@Override
 	public double solve(Operand operand) {
@@ -64,11 +51,11 @@ public class SolverImpl implements Solver {
 	}
 
 	private void solverLoop(Operand operand) {
-		for (int i = 0; i < operationPriority.size(); i++) {
+		for (Operation[] operationPrioritySublist : operationPriority) {
 			for (int j = 1; j < operand.size(); j++) {
-				for (int k = 0; k < operationPriority.get(i).size(); k++) {
-					if (operand.get(j).getOperation().equals(operationPriority.get(i).get(k))) {
-						solveOperand(operand, operationPriority.get(i).get(k), j);
+				for (Operation operation : operationPrioritySublist) {
+					if (operand.get(j).getOperation().equals(operation)) {
+						solveOperand(operand, operation, j);
 						j = 0;
 						break;
 					}
