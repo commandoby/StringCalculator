@@ -23,11 +23,11 @@ public class SolverImpl implements Solver {
 	public double solve(Operand operand) {
 		Solver solver = new SolverImpl();
 
-		if (staticOperand == null || staticOperand.size() == 0) {
+		if (staticOperand == null || staticOperand.isEmpty()) {
 			staticOperand = operand;
 		}
 
-		if (operand.size() > 0) {
+		if (!operand.isEmpty()) {
 			for (int i = 0; i < operand.size(); i++) {
 				if (operand.get(i).size() > 0) {
 					operand.get(i).setOperandNumber(solver.solve(operand.get(i)));

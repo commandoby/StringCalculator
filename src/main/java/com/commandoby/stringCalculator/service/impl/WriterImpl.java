@@ -21,7 +21,7 @@ public class WriterImpl implements Writer {
 			if (subOperand.getOperation() != null) {
 				sb.append(writeOperation(subOperand.getOperation()));
 			}
-			if (subOperand.size() == 0) {
+			if (subOperand.isEmpty()) {
 				sb.append(writeOperandNumber(subOperand.getOperandNumber()));
 			} else {
 				sb.append("(" + writer.write(subOperand) + ")");

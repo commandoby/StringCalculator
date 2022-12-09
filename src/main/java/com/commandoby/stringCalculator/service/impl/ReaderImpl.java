@@ -30,11 +30,11 @@ public class ReaderImpl implements Reader {
 	}
 
 	@Override
-	public List<Operand> read(String text)
+	public Operand read(String text)
 			throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
-		List<Operand> operandList = new ArrayList<>();
+		Operand operand = new Operand(null, 0);
 
-		for (int i = 0; i < text.length(); i++) {
+		/*for (int i = 0; i < text.length(); i++) {
 			String sumbol = text.substring(i, i + 1);
 
 			if (sumbol.equals(" ")) {
@@ -46,13 +46,13 @@ public class ReaderImpl implements Reader {
 			}
 			if (sumbol.matches("\\d")) {
 				i = readNumber(text, i) - 1;
-				operandList.add(inclusiveOperand);
+				operand.add(inclusiveOperand);
 				inclusiveOperand = new Operand(null, 0);
 				continue;
 			}
 			if (sumbol.matches("\\(")) {
 				i = readSubEquation(text, i + 1);
-				operandList.add(inclusiveOperand);
+				operand.add(inclusiveOperand);
 				inclusiveOperand = new Operand(null, 0);
 				continue;
 			}
@@ -60,14 +60,18 @@ public class ReaderImpl implements Reader {
 				throw new SubEquationException("Missing opening bracket.");
 			}
 			throw new InvalidCharacterException("Invalid character: " + sumbol);
-		}
+		}*/
+		/*\\s*\\D*\\s*\\d+(\\.|,)?\\d*/
+		String[] operandsTexts = text.split("\\d");
 
-		if (operandList.get(0).getOperation() != null && operandList.get(0).getOperation().equals(SUBTRACT)
-				&& operandList.get(0).getOperandNumber() > 0 && operandList.get(0).size() == 0) {
-			operandList.get(0).setOperandNumber(operandList.get(0).getOperandNumber() * (-1));
-			operandList.get(0).setOperation(null);
-		}
-		return operandList;
+	System.out.println(operandsTexts.length);
+		/*if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(SUBTRACT)
+				&& operand.get(0).getOperandNumber() > 0 && operand.get(0).size() == 0) {
+			operand.get(0).setOperandNumber(operand.get(0).getOperandNumber() * (-1));
+			operand.get(0).setOperation(null);
+		}*/
+		
+				return operand;
 	}
 
 	private void readOperation(String symbol) throws InvalidCharacterException, ConflictOfOperationsException {
@@ -126,7 +130,7 @@ public class ReaderImpl implements Reader {
 			}
 			if (sumbol.matches("\\)")) {
 				if (subEquationLevel == 0) {
-					inclusiveOperand.addAll(reader.read(text.substring(startPoint, i)));
+					inclusiveOperand = reader.read(text.substring(startPoint, i));
 					return i;
 				} else {
 					subEquationLevel--;
