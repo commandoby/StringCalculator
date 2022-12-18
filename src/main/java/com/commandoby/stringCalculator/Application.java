@@ -88,7 +88,7 @@ public class Application {
 			Operand operand = reader.read(text);
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			print(answerText + "\n");
-		} catch (InvalidCharacterException | ConflictOfOperationsException | SubEquationException | WriteException
+		} catch (InvalidCharacterException | SubEquationException | WriteException
 				| NumberFormatException e) {
 			log.error(e);
 			printOnlySwing(e.toString() + "\n");
@@ -96,7 +96,7 @@ public class Application {
 	}
 
 	static double getAnswer(String text)
-			throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
+			throws InvalidCharacterException, SubEquationException {
 		Operand operand = reader.read(text);
 		return solver.solve(operand);
 	}
