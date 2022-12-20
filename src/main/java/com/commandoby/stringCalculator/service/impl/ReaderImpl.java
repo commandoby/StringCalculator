@@ -1,11 +1,15 @@
 package com.commandoby.stringCalculator.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
@@ -49,6 +53,10 @@ public class ReaderImpl implements Reader {
 		List<String> textOperands = split(text);
 
 		for (String s : textOperands) {
+			System.out.println(s);
+		}
+
+		for (String s : textOperands) {
 			readOperation(s);
 			readNumber(s);
 			operand.add(inclusiveOperand);
@@ -65,18 +73,56 @@ public class ReaderImpl implements Reader {
 	}
 
 	private List<String> split(String text) {
-		List<String> textList = new ArrayList<>();
+		Map<Integer, String> mapOfTextOperands = new HashMap<>();
+
+		splitOfSubEquations(mapOfTextOperands, text);
+		splitOfNumbers(mapOfTextOperands, text);
+
+		Stream<Map.Entry<Integer, String>> stream = mapOfTextOperands.entrySet().stream()
+				.sorted(new Comparator<Map.Entry<Integer, String>>() {
+					@Override
+					public int compare(Entry<Integer, String> o1, Entry<Integer, String> o2) {
+						return o1.getKey().compareTo(o2.getKey());
+					}
+				});
+		return stream.map(Map.Entry::getValue).toList();
+	}
+
+	private void splitOfSubEquations(Map<Integer, String> map, String text) {
+		Pattern patternOfStart = Pattern.compile("\\s*\\D*\\s*\\(");
+		Matcher matcherOfStart = patternOfStart.matcher(text);
+
+		if (matcherOfStart.find()) {
+			List<Integer> countOfOpening = new ArrayList<>();
+			List<Integer> countOfClosing = new ArrayList<>();
+			Pattern patternOfOpening = Pattern.compile("\\(");
+			Pattern patternOfClosing = Pattern.compile("\\)");
+			Matcher matcherOfOpening = patternOfOpening.matcher(text);
+			Matcher matcherOfClosing = patternOfClosing.matcher(text);
+			
+			while (matcherOfOpening.find()) {
+				countOfOpening.add(matcherOfOpening.start());
+			}
+			while (matcherOfClosing.find()) {
+				countOfClosing.add(matcherOfClosing.start());
+			}
+			
+			for (Integer i: countOfOpening) {
+				System.out.print(i + " ");
+				System.out.println();
+			}
+			for (Integer i: countOfClosing) {
+				System.out.print(i + " ");
+			}
+		}
+	}
+
+	private void splitOfNumbers(Map<Integer, String> map, String text) {
 		Pattern pattern = Pattern.compile("\\s*\\D*\\s*\\d+(\\.|,)?\\d*");
 		Matcher matcher = pattern.matcher(text);
 		while (matcher.find()) {
-			textList.add(matcher.group());
+			map.put(matcher.start(), matcher.group());
 		}
-
-		for (String t : textList) {
-			System.out.println(t);
-		}
-
-		return textList;
 	}
 
 	private void readOperation(String text) throws InvalidCharacterException {
