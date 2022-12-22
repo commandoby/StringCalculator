@@ -22,7 +22,9 @@ import static com.commandoby.stringCalculator.enums.Operation.*;
 public class ReaderImpl implements Reader {
 	private Operand inclusiveOperand = new Operand(null, 0);
 	boolean negative = false;
+	private String currentText;
 	public static final Map<Operation, String> symbolsOfOperations = new HashMap<>();
+	
 
 	{
 		symbolsOfOperations.put(ADD, " + ");
@@ -49,9 +51,11 @@ public class ReaderImpl implements Reader {
 		 * SubEquationException("Missing opening bracket."); } throw new
 		 * InvalidCharacterException("Invalid character: " + sumbol); }
 		 */
+		currentText = text;
 		Operand operand = new Operand(null, 0);
-		List<String> textOperands = split(text);
+		List<String> textOperands = split();
 
+		System.out.println(textOperands.size());
 		for (String s : textOperands) {
 			System.out.println(s);
 		}
@@ -72,11 +76,11 @@ public class ReaderImpl implements Reader {
 		return operand;
 	}
 
-	private List<String> split(String text) {
+	private List<String> split() {
 		Map<Integer, String> mapOfTextOperands = new HashMap<>();
 
-		splitOfSubEquations(mapOfTextOperands, text);
-		splitOfNumbers(mapOfTextOperands, text);
+		splitOfSubEquations(mapOfTextOperands);
+		splitOfNumbers(mapOfTextOperands);
 
 		Stream<Map.Entry<Integer, String>> stream = mapOfTextOperands.entrySet().stream()
 				.sorted(new Comparator<Map.Entry<Integer, String>>() {
@@ -88,38 +92,44 @@ public class ReaderImpl implements Reader {
 		return stream.map(Map.Entry::getValue).toList();
 	}
 
-	private void splitOfSubEquations(Map<Integer, String> map, String text) {
+	private void splitOfSubEquations(Map<Integer, String> map) {
+		System.out.println(currentText);
+		String newText = currentText;
 		Pattern patternOfStart = Pattern.compile("\\s*\\D*\\s*\\(");
-		Matcher matcherOfStart = patternOfStart.matcher(text);
+		Matcher matcherOfStart = patternOfStart.matcher(currentText);
 
-		if (matcherOfStart.find()) {
+		while (matcherOfStart.find()) {
 			List<Integer> countOfOpening = new ArrayList<>();
 			List<Integer> countOfClosing = new ArrayList<>();
-			Pattern patternOfOpening = Pattern.compile("\\(");
-			Pattern patternOfClosing = Pattern.compile("\\)");
-			Matcher matcherOfOpening = patternOfOpening.matcher(text);
-			Matcher matcherOfClosing = patternOfClosing.matcher(text);
-			
-			while (matcherOfOpening.find()) {
-				countOfOpening.add(matcherOfOpening.start());
+
+			for (int i = matcherOfStart.start(); i < currentText.length(); i++) {
+				String sumbol = currentText.substring(i, i + 1);
+
+				if (sumbol.matches("\\(")) {
+					countOfOpening.add(i);
+					continue;
+				}
+				if (sumbol.matches("\\)")) {
+					countOfClosing.add(i);
+				}
+				if (countOfClosing.size() > 0 && countOfOpening.size() == countOfClosing.size()) {
+					break;
+				}
 			}
-			while (matcherOfClosing.find()) {
-				countOfClosing.add(matcherOfClosing.start());
-			}
-			
-			for (Integer i: countOfOpening) {
-				System.out.print(i + " ");
-				System.out.println();
-			}
-			for (Integer i: countOfClosing) {
-				System.out.print(i + " ");
-			}
+
+			String subText = currentText.substring(matcherOfStart.start(), countOfClosing.get(countOfClosing.size() - 1) + 1);
+			map.put(matcherOfStart.start(), subText);
+			newText = newText.replaceFirst(Pattern.quote(subText), "");
+			System.out.println(subText);
 		}
+		
+		currentText = newText;
 	}
 
-	private void splitOfNumbers(Map<Integer, String> map, String text) {
+	private void splitOfNumbers(Map<Integer, String> map) {
+		System.out.println(currentText);
 		Pattern pattern = Pattern.compile("\\s*\\D*\\s*\\d+(\\.|,)?\\d*");
-		Matcher matcher = pattern.matcher(text);
+		Matcher matcher = pattern.matcher(currentText);
 		while (matcher.find()) {
 			map.put(matcher.start(), matcher.group());
 		}
@@ -166,27 +176,4 @@ public class ReaderImpl implements Reader {
 			inclusiveOperand.setOperandNumber(value);
 		}
 	}
-
-	private int readSubEquation(String text, int startPoint) throws InvalidCharacterException, SubEquationException {
-		Reader reader = new ReaderImpl();
-		int subEquationLevel = 0;
-
-		for (int i = startPoint; i < text.length(); i++) {
-			String sumbol = text.substring(i, i + 1);
-
-			if (sumbol.matches("\\(")) {
-				subEquationLevel++;
-			}
-			if (sumbol.matches("\\)")) {
-				if (subEquationLevel == 0) {
-					inclusiveOperand = reader.read(text.substring(startPoint, i));
-					return i;
-				} else {
-					subEquationLevel--;
-				}
-			}
-		}
-		throw new SubEquationException("Missing closing bracket.");
-	}
-
 }
