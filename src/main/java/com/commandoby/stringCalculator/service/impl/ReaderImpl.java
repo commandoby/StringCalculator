@@ -24,7 +24,6 @@ public class ReaderImpl implements Reader {
 	boolean negative = false;
 	private String currentText;
 	public static final Map<Operation, String> symbolsOfOperations = new HashMap<>();
-	
 
 	{
 		symbolsOfOperations.put(ADD, " + ");
@@ -61,8 +60,12 @@ public class ReaderImpl implements Reader {
 		}
 
 		for (String s : textOperands) {
+			if (s.matches(".*\\(+.*")) {
+				inclusiveOperand = read(s.replaceFirst(".*\\(", ""));
+			} else {
+				readNumber(s);
+			}
 			readOperation(s);
-			readNumber(s);
 			operand.add(inclusiveOperand);
 			inclusiveOperand = new Operand(null, 0);
 		}
@@ -95,7 +98,7 @@ public class ReaderImpl implements Reader {
 	private void splitOfSubEquations(Map<Integer, String> map) {
 		System.out.println(currentText);
 		String newText = currentText;
-		Pattern patternOfStart = Pattern.compile("\\s*\\D*\\s*\\(");
+		Pattern patternOfStart = Pattern.compile("\\s*[^0-9\\)]*\\s*\\(");
 		Matcher matcherOfStart = patternOfStart.matcher(currentText);
 
 		while (matcherOfStart.find()) {
@@ -117,12 +120,13 @@ public class ReaderImpl implements Reader {
 				}
 			}
 
-			String subText = currentText.substring(matcherOfStart.start(), countOfClosing.get(countOfClosing.size() - 1) + 1);
+			String subText = currentText.substring(matcherOfStart.start(),
+					countOfClosing.get(countOfClosing.size() - 1) + 1);
 			map.put(matcherOfStart.start(), subText);
 			newText = newText.replaceFirst(Pattern.quote(subText), "");
-			System.out.println(subText);
+			System.out.println(matcherOfStart.start() + " " + subText + " |" + newText + "|");
 		}
-		
+
 		currentText = newText;
 	}
 
@@ -136,7 +140,7 @@ public class ReaderImpl implements Reader {
 	}
 
 	private void readOperation(String text) throws InvalidCharacterException {
-		Pattern pattern = Pattern.compile("\\s*\\D+\\s*");
+		Pattern pattern = Pattern.compile("\\s*[^0-9\\(]+\\s*");
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			String symbol = matcher.group().trim();
