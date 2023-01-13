@@ -83,9 +83,10 @@ public class Application {
 		double answer = 0;
 
 		try {
-			answer = getAnswer(text);
-
 			Operand operand = reader.read(text);
+			System.out.println(operand);
+			
+			answer = solver.solve(operand);
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			print(answerText + "\n");
 		} catch (InvalidCharacterException | SubEquationException | WriteException
@@ -95,10 +96,10 @@ public class Application {
 		}
 	}
 
+	//test's method
 	static double getAnswer(String text)
 			throws InvalidCharacterException, SubEquationException {
-		Operand operand = reader.read(text);
-		return solver.solve(operand);
+		return solver.solve(reader.read(text));
 	}
 
 	public static void print(String text) {
