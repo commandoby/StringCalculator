@@ -32,7 +32,6 @@ public class SolverImpl implements Solver {
 				if (operand.get(i).size() > 0) {
 					operand.get(i).setOperandNumber(solver.solve(operand.get(i)));
 					operand.get(i).clear();
-					;
 				}
 			}
 
@@ -42,7 +41,6 @@ public class SolverImpl implements Solver {
 
 			operand.setOperandNumber(operand.get(0).getOperandNumber());
 			operand.clear();
-			;
 		} else {
 			return operand.getOperandNumber();
 		}

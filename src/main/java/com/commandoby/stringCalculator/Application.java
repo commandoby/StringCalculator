@@ -29,7 +29,7 @@ public class Application {
 	private static Logger log = Logger.getLogger(Application.class);
 	private static Scanner scanner = new Scanner(System.in);
 
-	public static boolean console = false;
+	public static boolean console = true;
 	public static String consoleText = START + "\n";
 	public static List<String> consoleListHistory = new ArrayList<>();
 
@@ -86,7 +86,7 @@ public class Application {
 			Operand operand = reader.read(text);
 			System.out.println(operand);
 			
-			answer = solver.solve(operand);
+			answer = solver.solve(operand.clone());
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			print(answerText + "\n");
 		} catch (InvalidCharacterException | SubEquationException | WriteException

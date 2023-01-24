@@ -36,16 +36,14 @@ public class ReaderImpl implements Reader {
 	@Override
 	public Operand read(String text) throws InvalidCharacterException, SubEquationException {
 		currentText = text;
+		System.out.println("Start " + text);
 		Operand operand = new Operand(null, 0);
 		List<String> textOperands = split();
 
 		for (String s : textOperands) {
 			System.out.println(s);
-		}
-
-		for (String s : textOperands) {
 			if (s.matches(".*\\(+.*")) {
-				inclusiveOperand = read(s.replaceFirst(".*\\(", ""));
+				inclusiveOperand = read(s.substring(0, s.length() - 1).replaceFirst("[^0-9\\s]*\\s*\\(", ""));
 			} else {
 				readNumber(s);
 			}
@@ -84,7 +82,7 @@ public class ReaderImpl implements Reader {
 		Pattern patternOfStart = Pattern.compile("[^0-9\\)]*\\s*\\(");
 		Matcher matcherOfStart = patternOfStart.matcher(currentText);
 
-		while (matcherOfStart.find()) {
+		if (matcherOfStart.find()) {
 			List<Integer> countOfOpening = new ArrayList<>();
 			List<Integer> countOfClosing = new ArrayList<>();
 
@@ -106,21 +104,21 @@ public class ReaderImpl implements Reader {
 			String subText = currentText.substring(matcherOfStart.start(),
 					countOfClosing.get(countOfClosing.size() - 1) + 1);
 			map.put(matcherOfStart.start(), subText);
-			
+
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < subText.length(); i++) {
 				sb.append(" ");
 			}
 			newText = newText.replaceFirst(Pattern.quote(subText), sb.toString());
 			System.out.println(matcherOfStart.start() + " " + subText + " |" + newText + "|");
+			currentText = newText;
+			splitOfSubEquations(map);
 		}
-
-		currentText = newText;
 	}
 
 	private void splitOfNumbers(Map<Integer, String> map) {
 		System.out.println(currentText);
-		Pattern pattern = Pattern.compile("\\D+\\s*\\d+(\\.|,)?\\d*");
+		Pattern pattern = Pattern.compile("[^0-9\\s]*\\s*\\d+(\\.|,)?\\d*");
 		Matcher matcher = pattern.matcher(currentText);
 		while (matcher.find()) {
 			System.out.println(matcher.start());
