@@ -41,13 +41,14 @@ public class ReaderImpl implements Reader {
 		List<String> textOperands = split();
 
 		for (String s : textOperands) {
-			System.out.println(s);
+			System.out.println("a " + s);
 			if (s.matches(".*\\(+.*")) {
 				inclusiveOperand = read(s.substring(0, s.length() - 1).replaceFirst("[^0-9\\s]*\\s*\\(", ""));
+				readOperation(s, Pattern.compile("\\s*[^0-9\\(]+\\s*\\("));
 			} else {
 				readNumber(s);
+				readOperation(s, Pattern.compile("\\s*[^0-9\\(]+\\s*\\d"));
 			}
-			readOperation(s);
 			operand.add(inclusiveOperand);
 			inclusiveOperand = new Operand(null, 0);
 		}
@@ -79,7 +80,7 @@ public class ReaderImpl implements Reader {
 
 	private void splitOfSubEquations(Map<Integer, String> map) {
 		String newText = currentText;
-		Pattern patternOfStart = Pattern.compile("[^0-9\\)]*\\s*\\(");
+		Pattern patternOfStart = Pattern.compile("[^0-9\\)\\s]*\\s*\\(");
 		Matcher matcherOfStart = patternOfStart.matcher(currentText);
 
 		if (matcherOfStart.find()) {
@@ -110,29 +111,29 @@ public class ReaderImpl implements Reader {
 				sb.append(" ");
 			}
 			newText = newText.replaceFirst(Pattern.quote(subText), sb.toString());
-			System.out.println(matcherOfStart.start() + " " + subText + " |" + newText + "|");
+			System.out.println("b " + matcherOfStart.start() + " " + subText + " |" + newText + "|");
 			currentText = newText;
 			splitOfSubEquations(map);
 		}
 	}
 
 	private void splitOfNumbers(Map<Integer, String> map) {
-		System.out.println(currentText);
+		System.out.println("c " + currentText);
 		Pattern pattern = Pattern.compile("[^0-9\\s]*\\s*\\d+(\\.|,)?\\d*");
 		Matcher matcher = pattern.matcher(currentText);
 		while (matcher.find()) {
-			System.out.println(matcher.start());
+			System.out.println("d " + matcher.start());
 			map.put(matcher.start(), matcher.group());
 		}
 	}
 
-	private void readOperation(String text) throws InvalidCharacterException {
-		Pattern pattern = Pattern.compile("\\s*[^0-9\\(]+\\s*");
+	private void readOperation(String text, Pattern pattern) throws InvalidCharacterException {
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			String symbol = matcher.group().trim();
 			for (Map.Entry<Operation, String> entrySymbol : symbolsOfOperations.entrySet()) {
-				if (entrySymbol.getValue().trim().equals(symbol)) {
+				Matcher symbolMatcher = Pattern.compile(Pattern.quote(entrySymbol.getValue().trim())).matcher(symbol);
+				if (symbolMatcher.find()) {
 					checkAndSetOperation(entrySymbol.getKey());
 					return;
 				}
