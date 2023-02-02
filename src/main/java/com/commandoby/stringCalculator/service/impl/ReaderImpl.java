@@ -21,7 +21,6 @@ import static com.commandoby.stringCalculator.enums.Operation.*;
 
 public class ReaderImpl implements Reader {
 	private Operand inclusiveOperand = new Operand(null, 0);
-	boolean negative = false;
 	private String currentText;
 	public static final Map<Operation, String> symbolsOfOperations = new HashMap<>();
 
@@ -44,10 +43,10 @@ public class ReaderImpl implements Reader {
 			System.out.println("a " + s);
 			if (s.matches(".*\\(+.*")) {
 				inclusiveOperand = read(s.substring(0, s.length() - 1).replaceFirst("[^0-9\\s]*\\s*\\(", ""));
-				readOperation(s, Pattern.compile("\\s*[^0-9\\(]+\\s*\\("));
+				readOperation(s, Pattern.compile("\\s*[^0-9,\\.\\(]+\\s*\\("));
 			} else {
 				readNumber(s);
-				readOperation(s, Pattern.compile("\\s*[^0-9\\(]+\\s*\\d"));
+				readOperation(s, Pattern.compile("\\s*[^0-9,\\.\\(]+\\s*\\d"));
 			}
 			operand.add(inclusiveOperand);
 			inclusiveOperand = new Operand(null, 0);
@@ -122,7 +121,7 @@ public class ReaderImpl implements Reader {
 		Pattern pattern = Pattern.compile("[^0-9\\s]*\\s*\\d+(\\.|,)?\\d*");
 		Matcher matcher = pattern.matcher(currentText);
 		while (matcher.find()) {
-			System.out.println("d " + matcher.start());
+			// System.out.println("d " + matcher.start());
 			map.put(matcher.start(), matcher.group());
 		}
 	}
@@ -134,20 +133,12 @@ public class ReaderImpl implements Reader {
 			for (Map.Entry<Operation, String> entrySymbol : symbolsOfOperations.entrySet()) {
 				Matcher symbolMatcher = Pattern.compile(Pattern.quote(entrySymbol.getValue().trim())).matcher(symbol);
 				if (symbolMatcher.find()) {
-					checkAndSetOperation(entrySymbol.getKey());
+					inclusiveOperand.setOperation(entrySymbol.getKey());
 					return;
 				}
 			}
 			throw new InvalidCharacterException("Invalid character: " + symbol);
 		}
-	}
-
-	private void checkAndSetOperation(Operation operation) {
-		if (operation.equals(SUBTRACT) && inclusiveOperand.getOperation() != null && !negative) {
-			negative = true;
-			return;
-		}
-		inclusiveOperand.setOperation(operation);
 	}
 
 	private void readNumber(String text) {
@@ -161,11 +152,16 @@ public class ReaderImpl implements Reader {
 			String numberStringWithoutDecimalPoint = decimalPointMatcher.replaceAll(".");
 
 			double value = Double.valueOf(numberStringWithoutDecimalPoint);
-			if (negative) {
-				value *= -1;
-			}
-			negative = false;
-			inclusiveOperand.setOperandNumber(value);
+			inclusiveOperand.setOperandNumber(checkNegativeNumber(value, text));
 		}
+	}
+
+	private double checkNegativeNumber(double value, String text) {
+		Pattern pattern = Pattern.compile("\\s*[^0-9\\(]+\\s*\\-\\s*\\d");
+		Matcher matcher = pattern.matcher(text);
+		if (matcher.find()) {
+			value *= -1;
+		}
+		return value;
 	}
 }
