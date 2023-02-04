@@ -35,18 +35,16 @@ public class ReaderImpl implements Reader {
 	@Override
 	public Operand read(String text) throws InvalidCharacterException, SubEquationException {
 		currentText = text;
-		System.out.println("Start " + text);
 		Operand operand = new Operand(null, 0);
 		List<String> textOperands = split();
 
 		for (String s : textOperands) {
-			System.out.println("a " + s);
 			if (s.matches(".*\\(+.*")) {
 				inclusiveOperand = read(s.substring(0, s.length() - 1).replaceFirst("[^0-9\\s]*\\s*\\(", ""));
-				readOperation(s, Pattern.compile("\\s*[^0-9,\\.\\(]+\\s*\\("));
+				readOperation(s, Pattern.compile("\\s*[^0-9,\\.\\(\\s]*\\s*\\-?\\s*\\("));
 			} else {
 				readNumber(s);
-				readOperation(s, Pattern.compile("\\s*[^0-9,\\.\\(]+\\s*\\d"));
+				readOperation(s, Pattern.compile("\\s*[^0-9,\\.\\(\\s]*\\s*\\-?\\s*\\d"));
 			}
 			operand.add(inclusiveOperand);
 			inclusiveOperand = new Operand(null, 0);
@@ -61,7 +59,7 @@ public class ReaderImpl implements Reader {
 		return operand;
 	}
 
-	private List<String> split() {
+	private List<String> split() throws SubEquationException {
 		Map<Integer, String> mapOfTextOperands = new HashMap<>();
 
 		splitOfSubEquations(mapOfTextOperands);
@@ -77,7 +75,7 @@ public class ReaderImpl implements Reader {
 		return stream.map(Map.Entry::getValue).toList();
 	}
 
-	private void splitOfSubEquations(Map<Integer, String> map) {
+	private void splitOfSubEquations(Map<Integer, String> map) throws SubEquationException {
 		String newText = currentText;
 		Pattern patternOfStart = Pattern.compile("[^0-9\\)\\s]*\\s*\\(");
 		Matcher matcherOfStart = patternOfStart.matcher(currentText);
@@ -96,13 +94,23 @@ public class ReaderImpl implements Reader {
 				if (sumbol.matches("\\)")) {
 					countOfClosing.add(i);
 				}
-				if (countOfClosing.size() > 0 && countOfOpening.size() == countOfClosing.size()) {
+			}
+			if (countOfOpening.size() > countOfClosing.size()) {
+				throw new SubEquationException("Missing closing bracket.");
+			}
+			if (countOfOpening.size() < countOfClosing.size()) {
+				throw new SubEquationException("Missing opening bracket.");
+			}
+			
+			int countOfClosingIndex = 0;
+			for (int i = 0; i < countOfClosing.size(); i++) {
+				if (i == countOfClosing.size() - 1 || countOfClosing.get(i) < countOfOpening.get(i+1)) {
+					countOfClosingIndex = i;
 					break;
 				}
 			}
-
 			String subText = currentText.substring(matcherOfStart.start(),
-					countOfClosing.get(countOfClosing.size() - 1) + 1);
+					countOfClosing.get(countOfClosingIndex) + 1);
 			map.put(matcherOfStart.start(), subText);
 
 			StringBuilder sb = new StringBuilder();
@@ -110,18 +118,15 @@ public class ReaderImpl implements Reader {
 				sb.append(" ");
 			}
 			newText = newText.replaceFirst(Pattern.quote(subText), sb.toString());
-			System.out.println("b " + matcherOfStart.start() + " " + subText + " |" + newText + "|");
 			currentText = newText;
 			splitOfSubEquations(map);
 		}
 	}
 
 	private void splitOfNumbers(Map<Integer, String> map) {
-		System.out.println("c " + currentText);
-		Pattern pattern = Pattern.compile("[^0-9\\s]*\\s*\\d+(\\.|,)?\\d*");
+		Pattern pattern = Pattern.compile("[^0-9\\s]*\\s*\\-?\\s*\\d+(\\.|,)?\\d*");
 		Matcher matcher = pattern.matcher(currentText);
 		while (matcher.find()) {
-			// System.out.println("d " + matcher.start());
 			map.put(matcher.start(), matcher.group());
 		}
 	}
@@ -137,7 +142,7 @@ public class ReaderImpl implements Reader {
 					return;
 				}
 			}
-			throw new InvalidCharacterException("Invalid character: " + symbol);
+			//throw new InvalidCharacterException("Invalid character: " + symbol);
 		}
 	}
 

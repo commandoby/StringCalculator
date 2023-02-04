@@ -9,14 +9,17 @@ import org.junit.jupiter.api.Test;
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.WriteException;
+import com.commandoby.stringCalculator.service.impl.ReaderImpl;
 import com.commandoby.stringCalculator.service.impl.WriterImpl;
 
 public class WriterTests {
 	private static Writer writer;
+	private static Reader reader;
 
 	@BeforeAll
 	public static void setUp() {
 		writer = new WriterImpl();
+		reader = new ReaderImpl();
 	}
 
 	@Test

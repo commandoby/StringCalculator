@@ -5,6 +5,7 @@ import java.util.Map;
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.WriteException;
+import com.commandoby.stringCalculator.service.Reader;
 import com.commandoby.stringCalculator.service.Writer;
 
 public class WriterImpl implements Writer {
@@ -39,10 +40,15 @@ public class WriterImpl implements Writer {
 	}
 
 	private String writeOperation(Operation operation) throws WriteException {
-		for (Map.Entry<Operation, String> entryOperation: ReaderImpl.symbolsOfOperations.entrySet()) {
-			if (entryOperation.getKey().equals(operation)) {
-				return entryOperation.getValue();
-			}
+		/*
+		 * for (Map.Entry<Operation, String> entryOperation:
+		 * ReaderImpl.symbolsOfOperations.entrySet()) { if
+		 * (entryOperation.getKey().equals(operation)) { return
+		 * entryOperation.getValue(); } }
+		 */
+		String textOperation = ReaderImpl.symbolsOfOperations.get(operation);
+		if (textOperation != null) {
+			return textOperation;
 		}
 		throw new WriteException("Operation read error.");
 	}
