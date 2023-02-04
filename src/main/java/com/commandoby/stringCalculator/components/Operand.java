@@ -55,7 +55,13 @@ public class Operand extends ArrayList<Operand> implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Operand [operation=" + operation + ", operandNumber=" + operandNumber + ", size()=" + size() + "]";
+
+		StringBuilder listToString = new StringBuilder();
+		for (Operand o : this) {
+			listToString.append("\n" + o.toString() + "");
+		}
+		return "Operand [operation=" + operation + ", operandNumber=" + operandNumber + ", size=" + size()
+				+ listToString + " ]";
 	}
 
 	public Operand clone() {
@@ -65,7 +71,9 @@ public class Operand extends ArrayList<Operand> implements Serializable {
 			operand.setOperation(this.operation);
 		}
 		if (super.size() > 0) {
-			operand.addAll(this.subList(0, this.size()));
+			for (Operand o : this) {
+				operand.add(o.clone());
+			}
 		} else {
 			operand.setOperandNumber(this.operandNumber);
 		}

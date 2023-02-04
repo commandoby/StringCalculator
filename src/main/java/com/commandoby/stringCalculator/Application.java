@@ -21,7 +21,7 @@ public class Application {
 			+ "help - help for valid commands;\n" + "point (n) - numbers after the decimal point (Default: 2);\n"
 			+ "more on/more off - Detailed solution.\n\n" + "Correct characters: + - * / ( ).\n\n"
 			+ "Example: 1.5 * (2 - 3) + 4^0.5\n";
-	public static final String START = "Welcome to the program for calculating equations.\n";
+	public static final String START = "Welcome to the program for calculating equations. v1.02\n";
 
 	private static Reader reader = new ReaderImpl();
 	private static Solver solver = new SolverImpl();
@@ -83,24 +83,22 @@ public class Application {
 		double answer = 0;
 
 		try {
-			answer = getAnswer(text);
-
-			Operand operand = new Operand(null, 0);
-			operand.addAll(reader.read(text));
+			Operand operand = reader.read(text);
+			
+			answer = solver.solve(operand.clone());
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			print(answerText + "\n");
-		} catch (InvalidCharacterException | ConflictOfOperationsException | SubEquationException | WriteException
+		} catch (InvalidCharacterException | SubEquationException | WriteException
 				| NumberFormatException e) {
 			log.error(e);
 			printOnlySwing(e.toString() + "\n");
 		}
 	}
 
+	//test's method
 	static double getAnswer(String text)
-			throws InvalidCharacterException, ConflictOfOperationsException, SubEquationException {
-		Operand operand = new Operand(null, 0);
-		operand.addAll(reader.read(text));
-		return solver.solve(operand);
+			throws InvalidCharacterException, SubEquationException {
+		return solver.solve(reader.read(text));
 	}
 
 	public static void print(String text) {

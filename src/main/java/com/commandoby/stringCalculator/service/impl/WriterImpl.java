@@ -1,8 +1,11 @@
 package com.commandoby.stringCalculator.service.impl;
 
+import java.util.Map;
+
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.WriteException;
+import com.commandoby.stringCalculator.service.Reader;
 import com.commandoby.stringCalculator.service.Writer;
 
 public class WriterImpl implements Writer {
@@ -19,7 +22,7 @@ public class WriterImpl implements Writer {
 			if (subOperand.getOperation() != null) {
 				sb.append(writeOperation(subOperand.getOperation()));
 			}
-			if (subOperand.size() == 0) {
+			if (subOperand.isEmpty()) {
 				sb.append(writeOperandNumber(subOperand.getOperandNumber()));
 			} else {
 				sb.append("(" + writer.write(subOperand) + ")");
@@ -37,20 +40,15 @@ public class WriterImpl implements Writer {
 	}
 
 	private String writeOperation(Operation operation) throws WriteException {
-		if (operation.equals(Operation.EXPONENTIETION)) {
-			return "^";
-		}
-		if (operation.equals(Operation.MULTIPLY)) {
-			return " * ";
-		}
-		if (operation.equals(Operation.DIVIDE)) {
-			return " / ";
-		}
-		if (operation.equals(Operation.ADD)) {
-			return " + ";
-		}
-		if (operation.equals(Operation.SUBTRACT)) {
-			return " - ";
+		/*
+		 * for (Map.Entry<Operation, String> entryOperation:
+		 * ReaderImpl.symbolsOfOperations.entrySet()) { if
+		 * (entryOperation.getKey().equals(operation)) { return
+		 * entryOperation.getValue(); } }
+		 */
+		String textOperation = ReaderImpl.symbolsOfOperations.get(operation);
+		if (textOperation != null) {
+			return textOperation;
 		}
 		throw new WriteException("Operation read error.");
 	}
