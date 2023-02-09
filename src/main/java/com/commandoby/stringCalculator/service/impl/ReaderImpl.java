@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -22,15 +21,6 @@ import static com.commandoby.stringCalculator.enums.Operation.*;
 public class ReaderImpl implements Reader {
 	private Operand inclusiveOperand = new Operand(null, 0);
 	private String currentText;
-	public static final Map<Operation, String> symbolsOfOperations = new HashMap<>();
-
-	{
-		symbolsOfOperations.put(ADD, " + ");
-		symbolsOfOperations.put(SUBTRACT, " - ");
-		symbolsOfOperations.put(MULTIPLY, " * ");
-		symbolsOfOperations.put(DIVIDE, " / ");
-		symbolsOfOperations.put(EXPONENTIETION, "^");
-	}
 
 	@Override
 	public Operand read(String text) throws InvalidCharacterException, SubEquationException {
@@ -41,10 +31,10 @@ public class ReaderImpl implements Reader {
 		for (String s : textOperands) {
 			if (s.matches(".*\\(+.*")) {
 				inclusiveOperand = read(s.substring(0, s.length() - 1).replaceFirst("[^0-9\\s]*\\s*\\(", ""));
-				readOperation(s, Pattern.compile("\\s*[^0-9,\\.\\(\\s]*\\s*\\-?\\s*\\("));
+				readOperation(s, "\\s*\\-?\\s*\\(");
 			} else {
 				readNumber(s);
-				readOperation(s, Pattern.compile("\\s*[^0-9,\\.\\(\\s]*\\s*\\-?\\s*\\d"));
+				readOperation(s, "\\s*\\-?\\s*\\d");
 			}
 			operand.add(inclusiveOperand);
 			inclusiveOperand = new Operand(null, 0);
@@ -101,16 +91,15 @@ public class ReaderImpl implements Reader {
 			if (countOfOpening.size() < countOfClosing.size()) {
 				throw new SubEquationException("Missing opening bracket.");
 			}
-			
+
 			int countOfClosingIndex = 0;
 			for (int i = 0; i < countOfClosing.size(); i++) {
-				if (i == countOfClosing.size() - 1 || countOfClosing.get(i) < countOfOpening.get(i+1)) {
+				if (i == countOfClosing.size() - 1 || countOfClosing.get(i) < countOfOpening.get(i + 1)) {
 					countOfClosingIndex = i;
 					break;
 				}
 			}
-			String subText = currentText.substring(matcherOfStart.start(),
-					countOfClosing.get(countOfClosingIndex) + 1);
+			String subText = currentText.substring(matcherOfStart.start(), countOfClosing.get(countOfClosingIndex) + 1);
 			map.put(matcherOfStart.start(), subText);
 
 			StringBuilder sb = new StringBuilder();
@@ -131,18 +120,17 @@ public class ReaderImpl implements Reader {
 		}
 	}
 
-	private void readOperation(String text, Pattern pattern) throws InvalidCharacterException {
-		Matcher matcher = pattern.matcher(text);
-		if (matcher.find()) {
-			String symbol = matcher.group().trim();
-			for (Map.Entry<Operation, String> entrySymbol : symbolsOfOperations.entrySet()) {
-				Matcher symbolMatcher = Pattern.compile(Pattern.quote(entrySymbol.getValue().trim())).matcher(symbol);
-				if (symbolMatcher.find()) {
-					inclusiveOperand.setOperation(entrySymbol.getKey());
-					return;
-				}
+	private void readOperation(String text, String pattern) throws InvalidCharacterException {
+		for (Operation operation : Operation.values()) {
+			Matcher symbolMatcher = Pattern.compile(Pattern.quote(operation.getText().trim()) + pattern).matcher(text);
+			if (symbolMatcher.find()) {
+				inclusiveOperand.setOperation(operation);
+				return;
 			}
-			//throw new InvalidCharacterException("Invalid character: " + symbol);
+		}
+		Matcher matcher = Pattern.compile(Pattern.quote("\\s*[^0-9\\(\\s]*\\s*\\-?\\s*(\\d|\\()")).matcher(text);
+		if (matcher.find()) {
+			throw new InvalidCharacterException("Invalid character: " + matcher.group());
 		}
 	}
 
@@ -162,7 +150,7 @@ public class ReaderImpl implements Reader {
 	}
 
 	private double checkNegativeNumber(double value, String text) {
-		Pattern pattern = Pattern.compile("\\s*[^0-9\\(]+\\s*\\-\\s*\\d");
+		Pattern pattern = Pattern.compile("\\s*[^0-9\\(\\s]+\\s*\\-\\s*\\d");
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			value *= -1;
