@@ -1,5 +1,8 @@
 package com.commandoby.stringCalculator;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,11 +20,7 @@ import com.commandoby.stringCalculator.service.impl.*;
 import com.commandoby.stringCalculator.swing.ViewConsoleSwing;
 
 public class Application {
-	private static final String HELP = "Commands:\n" + "exit - complete the program;\n"
-			+ "help - help for valid commands;\n" + "point (n) - numbers after the decimal point (Default: 2);\n"
-			+ "more on/more off - Detailed solution.\n\n" + "Correct characters: + - * / ( ).\n\n"
-			+ "Example: 1.5 * (2 - 3) + 4^0.5\n";
-	public static final String START = "Welcome to the program for calculating equations. v1.02\n";
+	public static final String START = "Welcome to the program for calculating equations. v1.03\n";
 
 	private static Reader reader = new ReaderImpl();
 	private static Solver solver = new SolverImpl();
@@ -52,7 +51,7 @@ public class Application {
 
 	public static String textAnalysis(String text) {
 		if (text.matches("help")) {
-			return HELP;
+			return readOfHelp();
 		}
 		if (text.matches("exit")) {
 			scanner.close();
@@ -84,21 +83,14 @@ public class Application {
 
 		try {
 			Operand operand = reader.read(text);
-			
+
 			answer = solver.solve(operand.clone());
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			print(answerText + "\n");
-		} catch (InvalidCharacterException | SubEquationException | WriteException
-				| NumberFormatException e) {
+		} catch (InvalidCharacterException | SubEquationException | WriteException | NumberFormatException e) {
 			log.error(e);
 			printOnlySwing(e.toString() + "\n");
 		}
-	}
-
-	//test's method
-	static double getAnswer(String text)
-			throws InvalidCharacterException, SubEquationException {
-		return solver.solve(reader.read(text));
 	}
 
 	public static void print(String text) {
@@ -115,5 +107,24 @@ public class Application {
 		if (!console) {
 			ViewConsoleSwing.print();
 		}
+	}
+
+	private static String readOfHelp() {
+		File file = new File("src/main/resources/Help.txt");
+		char[] chars = new char[(int) file.length()];
+
+		try (FileReader reader = new FileReader(file)) {
+			reader.read(chars);
+		} catch (IOException e) {
+			log.error(e);
+			printOnlySwing(e.toString() + "\n");
+		}
+
+		return new String(chars);
+	}
+
+	// test's method
+	static double getAnswer(String text) throws InvalidCharacterException, SubEquationException {
+		return solver.solve(reader.read(text));
 	}
 }
