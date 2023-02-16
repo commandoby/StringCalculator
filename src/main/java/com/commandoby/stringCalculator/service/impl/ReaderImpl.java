@@ -8,10 +8,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
+import com.commandoby.stringCalculator.enums.OperationType;
 import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.exceptions.SubEquationException;
 import com.commandoby.stringCalculator.service.Reader;
@@ -21,6 +23,27 @@ import static com.commandoby.stringCalculator.enums.Operation.*;
 public class ReaderImpl implements Reader {
 	private Operand inclusiveOperand = new Operand(null, 0);
 	private String currentText;
+
+	private static Pattern splitOfSubEquationsPattern;
+	private static Pattern splitOfNumbersPattern;
+	private static Pattern checkNegativeNumberPattern;
+
+	static {
+		List<String> operationStringList = Stream.of(Operation.values()).filter(t -> t.getType() == OperationType.FIRST)
+				.map(Operation::getPattern).collect(Collectors.toList());
+
+		StringBuilder firstBuilder = new StringBuilder();
+		for (String s : operationStringList) {
+			if (!firstBuilder.isEmpty()) {
+				firstBuilder.append("|");
+			}
+			firstBuilder.append(s);
+		}
+
+		splitOfSubEquationsPattern = Pattern.compile("(" + firstBuilder.toString() + "|^\\))*\\s*\\(");
+		splitOfNumbersPattern = Pattern.compile("(" + firstBuilder.toString() + ")*\\s*-?\\s*\\d+(\\.|,)?\\d*");
+		checkNegativeNumberPattern = Pattern.compile("(" + firstBuilder.toString() + "|^\\()+\\s*-\\s*\\d");
+	}
 
 	@Override
 	public Operand read(String text) throws InvalidCharacterException, SubEquationException {
@@ -67,8 +90,7 @@ public class ReaderImpl implements Reader {
 
 	private void splitOfSubEquations(Map<Integer, String> map) throws SubEquationException {
 		String newText = currentText;
-		Pattern patternOfStart = Pattern.compile("[^0-9\\)\\s]*\\s*\\(");
-		Matcher matcherOfStart = patternOfStart.matcher(currentText);
+		Matcher matcherOfStart = splitOfSubEquationsPattern.matcher(currentText);
 
 		if (matcherOfStart.find()) {
 			List<Integer> countOfOpening = new ArrayList<>();
@@ -113,8 +135,7 @@ public class ReaderImpl implements Reader {
 	}
 
 	private void splitOfNumbers(Map<Integer, String> map) {
-		Pattern pattern = Pattern.compile("[^0-9\\s]*\\s*\\-?\\s*\\d+(\\.|,)?\\d*");
-		Matcher matcher = pattern.matcher(currentText);
+		Matcher matcher = splitOfNumbersPattern.matcher(currentText);
 		while (matcher.find()) {
 			map.put(matcher.start(), matcher.group());
 		}
@@ -128,7 +149,8 @@ public class ReaderImpl implements Reader {
 				return;
 			}
 		}
-		Matcher matcher = Pattern.compile(Pattern.quote("\\s*[^0-9\\(\\s]*\\s*\\-?\\s*(\\d|\\()")).matcher(text);
+
+		Matcher matcher = Pattern.compile(Pattern.quote("\\s*[^0-9\\(\\s]*\\s*-?\\s*(\\d|\\()")).matcher(text);
 		if (matcher.find()) {
 			throw new InvalidCharacterException("Invalid character: " + matcher.group());
 		}
@@ -150,8 +172,7 @@ public class ReaderImpl implements Reader {
 	}
 
 	private double checkNegativeNumber(double value, String text) {
-		Pattern pattern = Pattern.compile("\\s*[^0-9\\(\\s]+\\s*\\-\\s*\\d");
-		Matcher matcher = pattern.matcher(text);
+		Matcher matcher = checkNegativeNumberPattern.matcher(text);
 		if (matcher.find()) {
 			value *= -1;
 		}
