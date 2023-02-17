@@ -17,7 +17,7 @@ public class SolverImpl implements Solver {
 	private static Operand staticOperand = null;
 	
 	Operation[][] operationPriority = new Operation[][] { { Operation.EXPONENTIETION },
-			{ Operation.MULTIPLY, Operation.DIVIDE }, { Operation.ADD, Operation.SUBTRACT } };
+			{ Operation.MULTIPLY, Operation.DIVIDE }, { Operation.ADD, Operation.FIRST_SUBTRACT } };
 
 	@Override
 	public double solve(Operand operand) {

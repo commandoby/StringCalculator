@@ -43,7 +43,7 @@ public class WriterTests {
 	public void writer_Test3() throws WriteException {
 		Operand expectedOperand = new Operand(null, 0);
 		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.SUBTRACT, -2));
+		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, -2));
 
 		assertEquals(writer.write(expectedOperand), "2 - -2");
 	}
@@ -73,7 +73,7 @@ public class WriterTests {
 	public void writer_Test6() throws WriteException {
 		Operand expectedOperand = new Operand(null, 0);
 		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.SUBTRACT, 2));
+		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, 2));
 
 		assertEquals(writer.write(expectedOperand), "2 - 2");
 	}

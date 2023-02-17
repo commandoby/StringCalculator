@@ -39,7 +39,7 @@ public class SolverTests {
 	public void solver_Test3() {
 		Operand expectedOperand = new Operand(null, 0);
 		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.SUBTRACT, -2));
+		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, -2));
 
 		assertEquals(solver.solve(expectedOperand), 4);
 	}
@@ -69,7 +69,7 @@ public class SolverTests {
 	public void solver_Test6() {
 		Operand expectedOperand = new Operand(null, 0);
 		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.SUBTRACT, 2));
+		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, 2));
 
 		assertEquals(solver.solve(expectedOperand), 0);
 	}

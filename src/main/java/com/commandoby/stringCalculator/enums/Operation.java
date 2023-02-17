@@ -8,12 +8,6 @@ public enum Operation {
 			return Math.pow(x, y);
 		}
 	},
-	SIN(" sin", "sin", OperationType.SECOND) {
-		@Override
-		public double action(double x, double y) {
-			return Math.sin(y);
-		}
-	},
 	MULTIPLY(" * ", "\\*", OperationType.FIRST) {
 		@Override
 		public double action(double x, double y) {
@@ -32,10 +26,40 @@ public enum Operation {
 			return x + y;
 		}
 	},
-	SUBTRACT(" - ", "-", OperationType.FIRST) {
+	FIRST_SUBTRACT(" - ", "-", OperationType.FIRST) {
 		@Override
 		public double action(double x, double y) {
 			return x - y;
+		}
+	},
+	SECOND_SUBTRACT("-", "-", OperationType.SECOND) {
+		@Override
+		public double action(double x, double y) {
+			return y*-1;
+		}
+	},
+	SIN("sin", "sin", OperationType.SECOND) {
+		@Override
+		public double action(double x, double y) {
+			return Math.sin(y);
+		}
+	},
+	COS("cos", "cos", OperationType.SECOND) {
+		@Override
+		public double action(double x, double y) {
+			return Math.cos(y);
+		}
+	},
+	DEGREE("°", "°", OperationType.LAST) {
+		@Override
+		public double action(double x, double y) {
+			return y*Math.PI/180;
+		}
+	},
+	PERCENT("%", "%", OperationType.LAST) {
+		@Override
+		public double action(double x, double y) {
+			return y/100;
 		}
 	};
 

@@ -29,20 +29,41 @@ public class ReaderImpl implements Reader {
 	private static Pattern checkNegativeNumberPattern;
 
 	static {
-		List<String> operationStringList = Stream.of(Operation.values()).filter(t -> t.getType() == OperationType.FIRST)
-				.map(Operation::getPattern).collect(Collectors.toList());
+		List<String> firstOperationStringList = Stream.of(Operation.values())
+				.filter(t -> t.getType() == OperationType.FIRST).map(Operation::getPattern)
+				.collect(Collectors.toList());
+		List<String> secondOperationStringList = Stream.of(Operation.values())
+				.filter(t -> t.getType() == OperationType.SECOND).map(Operation::getPattern)
+				.collect(Collectors.toList());
+		List<String> lastOperationStringList = Stream.of(Operation.values())
+				.filter(t -> t.getType() == OperationType.LAST).map(Operation::getPattern).collect(Collectors.toList());
 
 		StringBuilder firstBuilder = new StringBuilder();
-		for (String s : operationStringList) {
+		for (String s : firstOperationStringList) {
 			if (!firstBuilder.isEmpty()) {
 				firstBuilder.append("|");
 			}
 			firstBuilder.append(s);
 		}
+		StringBuilder secondBuilder = new StringBuilder();
+		for (String s : secondOperationStringList) {
+			if (!secondBuilder.isEmpty()) {
+				secondBuilder.append("|");
+			}
+			secondBuilder.append(s);
+		}
+		StringBuilder lastBuilder = new StringBuilder();
+		for (String s : lastOperationStringList) {
+			if (!lastBuilder.isEmpty()) {
+				lastBuilder.append("|");
+			}
+			lastBuilder.append(s);
+		}
 
-		splitOfSubEquationsPattern = Pattern.compile("(" + firstBuilder.toString() + "|^\\))*\\s*\\(");
-		splitOfNumbersPattern = Pattern.compile("(" + firstBuilder.toString() + ")*\\s*-?\\s*\\d+(\\.|,)?\\d*");
-		checkNegativeNumberPattern = Pattern.compile("(" + firstBuilder.toString() + "|^\\()+\\s*-\\s*\\d");
+		splitOfSubEquationsPattern = Pattern.compile("(" + firstBuilder.toString() + ")*\\s*\\(");
+		splitOfNumbersPattern = Pattern.compile("(" + firstBuilder.toString() + ")*\\s*(" + secondBuilder.toString()
+				+ ")\\s*\\d+(\\.|,)?\\d*\\s*(" + lastBuilder.toString() + ")");
+		//checkNegativeNumberPattern = Pattern.compile("(" + firstBuilder.toString() + "|)+\\s*-\\s*\\d");
 	}
 
 	@Override
@@ -52,23 +73,26 @@ public class ReaderImpl implements Reader {
 		List<String> textOperands = split();
 
 		for (String s : textOperands) {
-			if (s.matches(".*\\(+.*")) {
-				inclusiveOperand = read(s.substring(0, s.length() - 1).replaceFirst("[^0-9\\s]*\\s*\\(", ""));
-				readOperation(s, "\\s*\\-?\\s*\\(");
-			} else {
-				readNumber(s);
-				readOperation(s, "\\s*\\-?\\s*\\d");
-			}
+			 if (s.matches(".*\\(+.*")) {
+			// inclusiveOperand = read(s.substring(0, s.length() -
+			// 1).replaceFirst("[^0-9\\s]*\\s*\\(", ""));
+			// readOperation(s, "\\s*\\-?\\s*\\(");
+			 } else {
+			// readNumber(s);
+			// readOperation(s, "\\s*\\-?\\s*\\d");
+				 readFirstOperation(s);
+			 }
 			operand.add(inclusiveOperand);
 			inclusiveOperand = new Operand(null, 0);
 		}
 
-		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(SUBTRACT)
-				&& operand.get(0).getOperandNumber() > 0 && operand.get(0).size() == 0) {
-			operand.get(0).setOperandNumber(operand.get(0).getOperandNumber() * (-1));
-			operand.get(0).setOperation(null);
+		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(FIRST_SUBTRACT)
+				&& operand.get(0).getOperandNumber() > 0 /* && operand.get(0).size() == 0 */) {
+			// operand.get(0).setOperandNumber(operand.get(0).getOperandNumber() * (-1));
+			operand.get(0).setOperation(SECOND_SUBTRACT);
 		}
 
+		//System.out.println(operand);
 		return operand;
 	}
 
@@ -141,11 +165,12 @@ public class ReaderImpl implements Reader {
 		}
 	}
 
-	private void readOperation(String text, String pattern) throws InvalidCharacterException {
+	private void readFirstOperation(String text) throws InvalidCharacterException {
 		for (Operation operation : Operation.values()) {
-			Matcher symbolMatcher = Pattern.compile(Pattern.quote(operation.getText().trim()) + pattern).matcher(text);
+			Matcher symbolMatcher = Pattern.compile(Pattern.quote(operation.getPattern())).matcher(text);
 			if (symbolMatcher.find()) {
 				inclusiveOperand.setOperation(operation);
+				text = text.replaceFirst(operation.getText().trim(), "");
 				return;
 			}
 		}
@@ -167,7 +192,8 @@ public class ReaderImpl implements Reader {
 			String numberStringWithoutDecimalPoint = decimalPointMatcher.replaceAll(".");
 
 			double value = Double.valueOf(numberStringWithoutDecimalPoint);
-			inclusiveOperand.setOperandNumber(checkNegativeNumber(value, text));
+			//inclusiveOperand.setOperandNumber(checkNegativeNumber(value, text));
+			inclusiveOperand.setOperandNumber(value);
 		}
 	}
 

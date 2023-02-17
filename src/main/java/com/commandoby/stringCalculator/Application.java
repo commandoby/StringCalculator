@@ -28,7 +28,7 @@ public class Application {
 	private static Logger log = Logger.getLogger(Application.class);
 	private static Scanner scanner = new Scanner(System.in);
 
-	public static boolean console = false;
+	public static boolean console = true;
 	public static String consoleText = START + "\n";
 	public static List<String> consoleListHistory = new ArrayList<>();
 
