@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import com.commandoby.stringCalculator.Application;
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
+import com.commandoby.stringCalculator.enums.OperationType;
 import com.commandoby.stringCalculator.exceptions.WriteException;
 import com.commandoby.stringCalculator.service.Solver;
 import com.commandoby.stringCalculator.service.Writer;
@@ -15,9 +16,6 @@ public class SolverImpl implements Solver {
 
 	public static boolean detailedSolution = false;
 	private static Operand staticOperand = null;
-	
-	Operation[][] operationPriority = new Operation[][] { { Operation.EXPONENTIETION },
-			{ Operation.MULTIPLY, Operation.DIVIDE }, { Operation.ADD, Operation.FIRST_SUBTRACT } };
 
 	@Override
 	public double solve(Operand operand) {
@@ -35,7 +33,7 @@ public class SolverImpl implements Solver {
 				}
 			}
 
-			while (operand.size() > 1) {
+			while (operand.size() > 1 || operand.get(0).getOperation() != null) {
 				solverLoop(operand);
 			}
 
@@ -49,11 +47,12 @@ public class SolverImpl implements Solver {
 	}
 
 	private void solverLoop(Operand operand) {
-		for (Operation[] operationPrioritySublist : operationPriority) {
-			for (int j = 1; j < operand.size(); j++) {
-				for (Operation operation : operationPrioritySublist) {
-					if (operand.get(j).getOperation().equals(operation)) {
-						solveOperand(operand, operation, j);
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < operand.size(); j++) {
+				for (Operation operation : Operation.values()) {
+					if (operand.get(j).getOperation() != null && operand.get(j).getOperation().equals(operation)
+							&& operand.get(j).getOperation().getPriority() == i) {
+						solveOperand(operand, j);
 						j = 0;
 						break;
 					}
@@ -62,25 +61,38 @@ public class SolverImpl implements Solver {
 		}
 	}
 
-	private void solveOperand(Operand operand, Operation operation, int operandNumber) {
-		Operand operandFirst = operand.get(operandNumber - 1).clone();
+	private void solveOperand(Operand operand, int operandNumber) {
 		Operand operandSecond = operand.get(operandNumber).clone();
-		double opernadNumberResult = operation.action(operandFirst.getOperandNumber(),
-				operandSecond.getOperandNumber());
-		operand.get(operandNumber - 1).setOperandNumber(opernadNumberResult);
-		operand.remove(operandNumber);
+		if (operandNumber > 0 && operand.get(operandNumber).getOperation().getType() == OperationType.FIRST) {
+			Operand operandFirst = operand.get(operandNumber - 1).clone();
+			double opernadNumberResult = operand.get(operandNumber).getOperation()
+					.action(operandFirst.getOperandNumber(), operandSecond.getOperandNumber());
+			operand.get(operandNumber - 1).setOperandNumber(opernadNumberResult);
+			operand.remove(operandNumber);
 
-		if (detailedSolution) {
-			descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
+			if (detailedSolution) {
+				descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
+			}
+		} else {
+			double opernadNumberResult = operand.get(operandNumber).getOperation()
+					.action(0, operand.get(operandNumber).getOperandNumber());
+			operand.get(operandNumber).setOperandNumber(opernadNumberResult);
+			operand.get(operandNumber).setOperation(null);
+			
+			if (detailedSolution) {
+				descriptionSolution(null, operandSecond, opernadNumberResult);
+			}
 		}
 	}
 
 	private void descriptionSolution(Operand operandFirst, Operand operandSecond, double result) {
 		try {
 			Operand operand = new Operand(null, 0);
-			operand.add(operandFirst);
+			if (operandFirst != null) {
+				operand.add(operandFirst);
+				operand.get(0).setOperation(null);
+			}
 			operand.add(operandSecond);
-			operand.get(0).setOperation(null);
 
 			String detailedSolutionText = "[" + writer.write(operand) + " = " + writer.writeOperandNumber(result)
 					+ "]  " + writer.write(staticOperand);
