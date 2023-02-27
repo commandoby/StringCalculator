@@ -1,5 +1,6 @@
 package com.commandoby.stringCalculator.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import com.commandoby.stringCalculator.service.Reader;
 import static com.commandoby.stringCalculator.enums.Operation.*;
 
 public class ReaderImpl implements Reader {
-	private Operand inclusiveOperand = new Operand(null, 0);
+	private Operand inclusiveOperand = new Operand(null, null);
 	private String currentText;
 
 	private static List<Operation> firstOperationList;
@@ -71,7 +72,7 @@ public class ReaderImpl implements Reader {
 	@Override
 	public Operand read(String text) throws InvalidCharacterException, SubEquationException {
 		currentText = text;
-		Operand operand = new Operand(null, 0);
+		Operand operand = new Operand(null, null);
 		List<String> textOperands = split();
 
 		for (String s : textOperands) {
@@ -90,7 +91,7 @@ public class ReaderImpl implements Reader {
 				}
 			}
 			operand.add(inclusiveOperand);
-			inclusiveOperand = new Operand(null, 0);
+			inclusiveOperand = new Operand(null, null);
 		}
 
 		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(FIRST_SUBTRACT)) {
@@ -232,9 +233,8 @@ public class ReaderImpl implements Reader {
 
 			Pattern decimalPointPattern = Pattern.compile(",");
 			Matcher decimalPointMatcher = decimalPointPattern.matcher(numberString);
-			String numberStringWithoutDecimalPoint = decimalPointMatcher.replaceAll(".");
+			BigDecimal value = new BigDecimal(decimalPointMatcher.replaceAll("."));
 
-			double value = Double.valueOf(numberStringWithoutDecimalPoint);
 			inclusiveOperand.setOperandNumber(value);
 		}
 	}

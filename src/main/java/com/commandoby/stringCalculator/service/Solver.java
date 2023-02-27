@@ -1,7 +1,9 @@
 package com.commandoby.stringCalculator.service;
 
+import java.math.BigDecimal;
+
 import com.commandoby.stringCalculator.components.Operand;
 
 public interface Solver {
-	double solve(Operand operand);
+	BigDecimal solve(Operand operand);
 }

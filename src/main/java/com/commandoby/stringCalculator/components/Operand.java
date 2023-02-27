@@ -1,6 +1,7 @@
 package com.commandoby.stringCalculator.components;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -9,9 +10,9 @@ import com.commandoby.stringCalculator.enums.Operation;
 public class Operand extends ArrayList<Operand> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	Operation operation;
-	double operandNumber;
+	BigDecimal operandNumber;
 
-	public Operand(Operation operation, double operandNumber) {
+	public Operand(Operation operation, BigDecimal operandNumber) {
 		this.operation = operation;
 		this.operandNumber = operandNumber;
 	}
@@ -24,11 +25,11 @@ public class Operand extends ArrayList<Operand> implements Serializable {
 		this.operation = operation;
 	}
 
-	public double getOperandNumber() {
+	public BigDecimal getOperandNumber() {
 		return operandNumber;
 	}
 
-	public void setOperandNumber(double operandNumber) {
+	public void setOperandNumber(BigDecimal operandNumber) {
 		this.operandNumber = operandNumber;
 	}
 
@@ -49,8 +50,7 @@ public class Operand extends ArrayList<Operand> implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Operand other = (Operand) obj;
-		return Double.doubleToLongBits(operandNumber) == Double.doubleToLongBits(other.operandNumber)
-				&& operation == other.operation;
+		return Objects.equals(operandNumber, other.operandNumber) && operation == other.operation;
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class Operand extends ArrayList<Operand> implements Serializable {
 	}
 
 	public Operand clone() {
-		Operand operand = new Operand(null, 0);
+		Operand operand = new Operand(null, null);
 
 		if (this.operation != null) {
 			operand.setOperation(this.operation);

@@ -1,6 +1,7 @@
 package com.commandoby.stringCalculator.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,16 +43,15 @@ public class WriterImpl implements Writer {
 	}
 
 	@Override
-	public String writeOperandNumber(double number) {
-		BigDecimal bigNumber = new BigDecimal(number);
+	public String writeOperandNumber(BigDecimal number) {
 		int i = 0;
 
 		while (i < numbersAfterTheDecimalPoint
-				&& bigNumber.remainder(decimalList.get(i)).compareTo(BigDecimal.ZERO) != 0) {
+				&& number.remainder(decimalList.get(i)).compareTo(BigDecimal.ZERO) != 0) {
 			i++;
 		}
 
-		return String.format("%1." + i + "f", number);
+		return number.setScale(i, RoundingMode.HALF_UP).toString();
 	}
 
 	private static void updateDecimalList() {

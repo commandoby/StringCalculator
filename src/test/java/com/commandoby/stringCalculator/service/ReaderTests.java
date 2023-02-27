@@ -2,6 +2,7 @@ package com.commandoby.stringCalculator.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class ReaderTests {
 	@Test
 	public void reader_Test1() throws InvalidCharacterException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, -1));
+		expected.add(new Operand(null, new BigDecimal(-1)));
 
 		List<Operand> actual = reader.read("-1");
 		assertEquals(expected, actual);
@@ -36,7 +37,7 @@ public class ReaderTests {
 	@Test
 	public void reader_Test2() throws InvalidCharacterException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 10));
+		expected.add(new Operand(null, new BigDecimal(10)));
 		
 		List<Operand> actual = reader.read("   10   ");
 		assertEquals(expected, actual);
@@ -45,8 +46,8 @@ public class ReaderTests {
 	@Test
 	public void reader_Test3() throws InvalidCharacterException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 1));
-		expected.add(new Operand(Operation.ADD, 2));
+		expected.add(new Operand(null, new BigDecimal(1)));
+		expected.add(new Operand(Operation.ADD, new BigDecimal(2)));
 		
 		List<Operand> actual = reader.read("1 + 2");
 		assertEquals(expected, actual);
@@ -55,9 +56,9 @@ public class ReaderTests {
 	@Test
 	public void reader_Test4() throws InvalidCharacterException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 2));
-		expected.add(new Operand(Operation.ADD, 2));
-		expected.add(new Operand(Operation.MULTIPLY, 2));
+		expected.add(new Operand(null, new BigDecimal(2)));
+		expected.add(new Operand(Operation.ADD, new BigDecimal(2)));
+		expected.add(new Operand(Operation.MULTIPLY, new BigDecimal(2)));
 		
 		List<Operand> actual = reader.read("2+2*2");
 		assertEquals(expected, actual);
@@ -66,10 +67,10 @@ public class ReaderTests {
 	@Test
 	public void reader_Test5() throws InvalidCharacterException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 0));
-		expected.get(0).add(new Operand(null, 2));
-		expected.get(0).add(new Operand(Operation.ADD, 2));
-		expected.add(new Operand(Operation.MULTIPLY, 2));
+		expected.add(new Operand(null, null));
+		expected.get(0).add(new Operand(null, new BigDecimal(2)));
+		expected.get(0).add(new Operand(Operation.ADD, new BigDecimal(2)));
+		expected.add(new Operand(Operation.MULTIPLY, new BigDecimal(2)));
 		
 		List<Operand> actual = reader.read("(2+2)*2");
 		assertEquals(expected, actual);
@@ -78,12 +79,12 @@ public class ReaderTests {
 	@Test
 	public void reader_Test6() throws InvalidCharacterException, SubEquationException {
 		List<Operand> expected = new ArrayList<>();
-		expected.add(new Operand(null, 0));
-		expected.get(0).add(new Operand(null, 2));
-		expected.get(0).add(new Operand(Operation.DIVIDE, 0));
-		expected.get(0).get(1).add(new Operand(null, 2));
-		expected.get(0).get(1).add(new Operand(Operation.ADD, 2));
-		expected.add(new Operand(Operation.EXPONENTIETION, 2));
+		expected.add(new Operand(null, null));
+		expected.get(0).add(new Operand(null, new BigDecimal(2)));
+		expected.get(0).add(new Operand(Operation.DIVIDE, null));
+		expected.get(0).get(1).add(new Operand(null, new BigDecimal(2)));
+		expected.get(0).get(1).add(new Operand(Operation.ADD, new BigDecimal(2)));
+		expected.add(new Operand(Operation.EXPONENTIETION, new BigDecimal(2)));
 		
 		List<Operand> actual = reader.read("(2/(2+2))^2");
 		assertEquals(expected, actual);

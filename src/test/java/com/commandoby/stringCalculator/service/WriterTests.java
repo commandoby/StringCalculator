@@ -2,6 +2,8 @@ package com.commandoby.stringCalculator.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,74 +26,74 @@ public class WriterTests {
 
 	@Test
 	public void writer_Test1() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, -1));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(-1)));
 
 		assertEquals(writer.write(expectedOperand), "-1");
 	}
 
 	@Test
 	public void writer_Test2() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.ADD, 2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.ADD, new BigDecimal(2)));
 
 		assertEquals(writer.write(expectedOperand), "2 + 2");
 	}
 
 	@Test
 	public void writer_Test3() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, -2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, new BigDecimal(-2)));
 
 		assertEquals(writer.write(expectedOperand), "2 - -2");
 	}
 
 	@Test
 	public void writer_Test4() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.ADD, 2));
-		expectedOperand.add(new Operand(Operation.MULTIPLY, 2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.ADD, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.MULTIPLY, new BigDecimal(2)));
 
 		assertEquals(writer.write(expectedOperand), "2 + 2 * 2");
 	}
 
 	@Test
 	public void writer_Test5() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 0));
-		expectedOperand.get(0).add(new Operand(null, 2));
-		expectedOperand.get(0).add(new Operand(Operation.ADD, 2));
-		expectedOperand.add(new Operand(Operation.MULTIPLY, 2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, null));
+		expectedOperand.get(0).add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.get(0).add(new Operand(Operation.ADD, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.MULTIPLY, new BigDecimal(2)));
 
 		assertEquals(writer.write(expectedOperand), "(2 + 2) * 2");
 	}
 
 	@Test
 	public void writer_Test6() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, 2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, new BigDecimal(2)));
 
 		assertEquals(writer.write(expectedOperand), "2 - 2");
 	}
 
 	@Test
 	public void writer_Test7() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.DIVIDE, 2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.DIVIDE, new BigDecimal(2)));
 
 		assertEquals(writer.write(expectedOperand), "2 / 2");
 	}
 
 	@Test
 	public void writer_Test8() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.EXPONENTIETION, 3));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.EXPONENTIETION, new BigDecimal(3)));
 
 		assertEquals(writer.write(expectedOperand), "2^3");
 	}

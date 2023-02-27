@@ -1,65 +1,71 @@
 package com.commandoby.stringCalculator.enums;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import com.commandoby.stringCalculator.service.impl.WriterImpl;
+
 public enum Operation {
 
 	EXPONENTIETION("^", "\\^", 1, OperationType.FIRST) {
 		@Override
-		public double action(double x, double y) {
-			return Math.pow(x, y);
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return new BigDecimal(Math.pow(a.doubleValue(), b.doubleValue()));
 		}
 	},
 	MULTIPLY(" * ", "\\*", 2, OperationType.FIRST) {
 		@Override
-		public double action(double x, double y) {
-			return x * y;
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return a.multiply(b);
 		}
 	},
 	DIVIDE(" / ", "/", 2, OperationType.FIRST) {
 		@Override
-		public double action(double x, double y) {
-			return x / y;
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return a.divide(b, WriterImpl.numbersAfterTheDecimalPoint + 10, RoundingMode.HALF_UP);
 		}
 	},
 	ADD(" + ", "\\+", 3, OperationType.FIRST) {
 		@Override
-		public double action(double x, double y) {
-			return x + y;
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return a.add(b);
 		}
 	},
 	FIRST_SUBTRACT(" - ", "-", 3, OperationType.FIRST) {
 		@Override
-		public double action(double x, double y) {
-			return x - y;
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return a.subtract(b);
 		}
 	},
 	SECOND_SUBTRACT("-", "-", 0, OperationType.SECOND) {
 		@Override
-		public double action(double x, double y) {
-			return y*-1;
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return b.multiply(new BigDecimal(-1));
 		}
 	},
 	SIN("sin", "sin", 0, OperationType.SECOND) {
 		@Override
-		public double action(double x, double y) {
-			return Math.sin(y);
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return new BigDecimal(Math.sin(b.doubleValue()));
 		}
 	},
 	COS("cos", "cos", 0, OperationType.SECOND) {
 		@Override
-		public double action(double x, double y) {
-			return Math.cos(y);
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return new BigDecimal(Math.cos(b.doubleValue()));
 		}
 	},
 	DEGREE("°", "°", 0, OperationType.LAST) {
 		@Override
-		public double action(double x, double y) {
-			return y*Math.PI/180;
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return b.multiply(new BigDecimal(Math.PI)).divide(new BigDecimal(180),
+					WriterImpl.numbersAfterTheDecimalPoint + 10, RoundingMode.HALF_UP);
 		}
 	},
 	PERCENT("%", "%", 0, OperationType.LAST) {
 		@Override
-		public double action(double x, double y) {
-			return y/100;
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return b.divide(new BigDecimal(100));
 		}
 	};
 
@@ -91,5 +97,5 @@ public enum Operation {
 		return type;
 	}
 
-	public abstract double action(double x, double y);
+	public abstract BigDecimal action(BigDecimal a, BigDecimal b) throws ArithmeticException;
 }

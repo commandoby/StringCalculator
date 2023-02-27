@@ -3,6 +3,7 @@ package com.commandoby.stringCalculator;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -79,7 +80,7 @@ public class Application {
 	}
 
 	private static void processAnswer(String text) {
-		double answer = 0;
+		BigDecimal answer = null;
 
 		try {
 			Operand operand = reader.read(text);
@@ -124,7 +125,7 @@ public class Application {
 	}
 
 	// test's method
-	static double getAnswer(String text) throws InvalidCharacterException, SubEquationException {
+	static BigDecimal getAnswer(String text) throws InvalidCharacterException, SubEquationException {
 		return solver.solve(reader.read(text));
 	}
 }
