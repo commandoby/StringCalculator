@@ -58,8 +58,7 @@ public enum Operation {
 	DEGREE("°", "°", 0, OperationType.LAST) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return b.multiply(new BigDecimal(Math.PI)).divide(new BigDecimal(180),
-					WriterImpl.numbersAfterTheDecimalPoint + 10, RoundingMode.HALF_UP);
+			return b.multiply(new BigDecimal(Math.PI)).divide(new BigDecimal(180));
 		}
 	},
 	PERCENT("%", "%", 0, OperationType.LAST) {

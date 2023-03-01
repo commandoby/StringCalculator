@@ -20,7 +20,7 @@ public class SolverImpl implements Solver {
 	private static Operand staticOperand = null;
 
 	@Override
-	public BigDecimal solve(Operand operand) {
+	public BigDecimal solve(Operand operand) throws ArithmeticException {
 		Solver solver = new SolverImpl();
 
 		if (staticOperand == null || staticOperand.isEmpty()) {
@@ -48,7 +48,7 @@ public class SolverImpl implements Solver {
 		return operand.getOperandNumber();
 	}
 
-	private void solverLoop(Operand operand) {
+	private void solverLoop(Operand operand) throws ArithmeticException {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < operand.size(); j++) {
 				for (Operation operation : Operation.values()) {
@@ -63,32 +63,28 @@ public class SolverImpl implements Solver {
 		}
 	}
 
-	private void solveOperand(Operand operand, int operandNumber) {
+	private void solveOperand(Operand operand, int operandNumber) throws ArithmeticException {
 		Operand operandSecond = operand.get(operandNumber).clone();
 
-		try {
-			if (operandNumber > 0 && operand.get(operandNumber).getOperation().getType() == OperationType.FIRST) {
-				Operand operandFirst = operand.get(operandNumber - 1).clone();
-				BigDecimal opernadNumberResult = operand.get(operandNumber).getOperation()
-						.action(operandFirst.getOperandNumber(), operandSecond.getOperandNumber());
-				operand.get(operandNumber - 1).setOperandNumber(opernadNumberResult);
-				operand.remove(operandNumber);
+		if (operandNumber > 0 && operand.get(operandNumber).getOperation().getType() == OperationType.FIRST) {
+			Operand operandFirst = operand.get(operandNumber - 1).clone();
+			BigDecimal opernadNumberResult = operand.get(operandNumber).getOperation()
+					.action(operandFirst.getOperandNumber(), operandSecond.getOperandNumber());
+			operand.get(operandNumber - 1).setOperandNumber(opernadNumberResult);
+			operand.remove(operandNumber);
 
-				if (detailedSolution) {
-					descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
-				}
-			} else {
-				BigDecimal opernadNumberResult = operand.get(operandNumber).getOperation().action(null,
-						operand.get(operandNumber).getOperandNumber());
-				operand.get(operandNumber).setOperandNumber(opernadNumberResult);
-				operand.get(operandNumber).setOperation(null);
-
-				if (detailedSolution) {
-					descriptionSolution(null, operandSecond, opernadNumberResult);
-				}
+			if (detailedSolution) {
+				descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
 			}
-		} catch (ArithmeticException e) {
-			log.warn(e.getMessage());
+		} else {
+			BigDecimal opernadNumberResult = operand.get(operandNumber).getOperation().action(null,
+					operand.get(operandNumber).getOperandNumber());
+			operand.get(operandNumber).setOperandNumber(opernadNumberResult);
+			operand.get(operandNumber).setOperation(null);
+
+			if (detailedSolution) {
+				descriptionSolution(null, operandSecond, opernadNumberResult);
+			}
 		}
 	}
 

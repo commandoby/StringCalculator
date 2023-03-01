@@ -88,7 +88,7 @@ public class Application {
 			answer = solver.solve(operand.clone());
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			print(answerText + "\n");
-		} catch (InvalidCharacterException | SubEquationException | WriteException | NumberFormatException e) {
+		} catch (Exception e) {
 			log.error(e);
 			printOnlySwing(e.toString() + "\n");
 		}
