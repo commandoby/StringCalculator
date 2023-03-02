@@ -63,9 +63,9 @@ public class ReaderImpl implements Reader {
 		}
 
 		splitOfSubEquationsPattern = Pattern
-				.compile("(" + firstBuilder.toString() + ")?\\s*(" + secondBuilder.toString() + ")*\\s*\\(");
+				.compile("((" + firstBuilder.toString() + ")\\s*)?(" + secondBuilder.toString() + ")*\\s*\\(");
 		splitOfSubEquationsEndPattern = Pattern.compile("\\)(" + lastBuilder.toString() + ")");
-		splitOfNumbersPattern = Pattern.compile("(" + firstBuilder.toString() + ")?\\s*(" + secondBuilder.toString()
+		splitOfNumbersPattern = Pattern.compile("((" + firstBuilder.toString() + ")\\s*)?(" + secondBuilder.toString()
 				+ ")*\\s*\\d+(\\.|,)?\\d*\\s*(" + lastBuilder.toString() + ")?");
 	}
 
@@ -101,11 +101,15 @@ public class ReaderImpl implements Reader {
 		return operand;
 	}
 
-	private List<String> split() throws SubEquationException {
+	private List<String> split() throws InvalidCharacterException, SubEquationException {
 		Map<Integer, String> mapOfTextOperands = new HashMap<>();
 
 		splitOfSubEquations(mapOfTextOperands);
 		splitOfNumbers(mapOfTextOperands);
+
+		if (currentText.matches("(.*)\\S(.*)")) {
+			throw new InvalidCharacterException(currentText.trim());
+		}
 
 		Stream<Map.Entry<Integer, String>> stream = mapOfTextOperands.entrySet().stream()
 				.sorted(new Comparator<Map.Entry<Integer, String>>() {
@@ -118,7 +122,6 @@ public class ReaderImpl implements Reader {
 	}
 
 	private void splitOfSubEquations(Map<Integer, String> map) throws SubEquationException {
-		String newText = currentText;
 		Matcher matcherOfStart = splitOfSubEquationsPattern.matcher(currentText);
 
 		if (matcherOfStart.find()) {
@@ -159,12 +162,8 @@ public class ReaderImpl implements Reader {
 			String subText = currentText.substring(matcherOfStart.start(), countOfClosingIndex + 1);
 			map.put(matcherOfStart.start(), subText);
 
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < subText.length(); i++) {
-				sb.append(" ");
-			}
-			newText = newText.replaceFirst(Pattern.quote(subText), sb.toString());
-			currentText = newText;
+			changeCurrentText(subText);
+
 			splitOfSubEquations(map);
 		}
 	}
@@ -173,7 +172,18 @@ public class ReaderImpl implements Reader {
 		Matcher matcher = splitOfNumbersPattern.matcher(currentText);
 		while (matcher.find()) {
 			map.put(matcher.start(), matcher.group());
+
+			changeCurrentText(matcher.group());
 		}
+	}
+
+	private void changeCurrentText(String text) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < text.length(); i++) {
+			sb.append(" ");
+		}
+
+		currentText = currentText.replaceFirst(Pattern.quote(text), sb.toString());
 	}
 
 	private String readFirstOperation(String text) throws InvalidCharacterException {

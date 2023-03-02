@@ -89,6 +89,7 @@ public class Application {
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			print(answerText + "\n");
 		} catch (Exception e) {
+			log.error("Error text: " + text);
 			log.error(e);
 			printOnlySwing(e.toString() + "\n");
 		}
