@@ -43,6 +43,19 @@ public enum Operation {
 			return b.multiply(new BigDecimal(-1));
 		}
 	},
+	DEGREE("°", "°", 0, OperationType.LAST) {
+		@Override
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return b.multiply(new BigDecimal(Math.PI)).divide(new BigDecimal(180),
+					WriterImpl.numbersAfterTheDecimalPoint + 10, RoundingMode.HALF_UP);
+		}
+	},
+	PERCENT("%", "%", 0, OperationType.LAST) {
+		@Override
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return b.divide(new BigDecimal(100));
+		}
+	},
 	SIN("sin", "sin", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
@@ -55,17 +68,49 @@ public enum Operation {
 			return new BigDecimal(Math.cos(b.doubleValue()));
 		}
 	},
-	DEGREE("°", "°", 0, OperationType.LAST) {
+	TG("tg", "tg", 0, OperationType.SECOND) {
+
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return b.multiply(new BigDecimal(Math.PI)).divide(new BigDecimal(180));
+			return new BigDecimal(Math.tan(b.doubleValue()));
+		}
+
+	},
+	CTG("ctg", "ctg", 0, OperationType.SECOND) {
+
+		@Override
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return new BigDecimal(Math.cos(b.doubleValue()) / Math.sin(b.doubleValue()));
+		}
+
+	},
+	ASIN("arcsin", "arcsin", 0, OperationType.SECOND) {
+		@Override
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return new BigDecimal(Math.asin(b.doubleValue()));
 		}
 	},
-	PERCENT("%", "%", 0, OperationType.LAST) {
+	ACOS("arccos", "arccos", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return b.divide(new BigDecimal(100));
+			return new BigDecimal(Math.acos(b.doubleValue()));
 		}
+	},
+	ATG("arctg", "arctg", 0, OperationType.SECOND) {
+
+		@Override
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return new BigDecimal(Math.atan(b.doubleValue()));
+		}
+
+	},
+	ACTG("arcctg", "arcctg", 0, OperationType.SECOND) {
+
+		@Override
+		public BigDecimal action(BigDecimal a, BigDecimal b) {
+			return new BigDecimal(Math.atan(1 / b.doubleValue()));
+		}
+
 	};
 
 	private String text;
@@ -96,5 +141,5 @@ public enum Operation {
 		return type;
 	}
 
-	public abstract BigDecimal action(BigDecimal a, BigDecimal b) throws ArithmeticException;
+	public abstract BigDecimal action(BigDecimal a, BigDecimal b);
 }

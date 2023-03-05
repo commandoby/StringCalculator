@@ -98,8 +98,8 @@ public class SolverImpl implements Solver {
 			}
 			operand.add(operandSecond);
 
-			String detailedSolutionText = "[" + writer.write(operand) + " = " + writer.writeOperandNumber(result)
-					+ "]  " + writer.write(staticOperand);
+			String detailedSolutionText = " [ " + writer.write(operand) + " = " + writer.writeOperandNumber(result)
+					+ " ]  " + writer.write(staticOperand);
 			Application.print(detailedSolutionText + "\n");
 		} catch (WriteException e) {
 			log.error(e);

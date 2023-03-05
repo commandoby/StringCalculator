@@ -1,8 +1,8 @@
 package com.commandoby.stringCalculator;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class Application {
 	private static Logger log = Logger.getLogger(Application.class);
 	private static Scanner scanner = new Scanner(System.in);
 
-	public static boolean console = true;
+	public static boolean console = false;
 	public static String consoleText = START + "\n";
 	public static List<String> consoleListHistory = new ArrayList<>();
 
@@ -112,17 +112,21 @@ public class Application {
 	}
 
 	private static String readOfHelp() {
-		File file = new File("src/main/resources/Help.txt");
-		char[] chars = new char[(int) file.length()];
+		InputStreamReader inputStreamReader = new InputStreamReader(
+				ClassLoader.getSystemClassLoader().getResourceAsStream("Help.txt"));
+		StringBuilder stringBuilder = new StringBuilder();
 
-		try (FileReader reader = new FileReader(file)) {
-			reader.read(chars);
+		try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				stringBuilder.append(line + "\n");
+			}
 		} catch (IOException e) {
 			log.error(e);
 			printOnlySwing(e.toString() + "\n");
 		}
 
-		return new String(chars);
+		return stringBuilder.toString();
 	}
 
 	// test's method
