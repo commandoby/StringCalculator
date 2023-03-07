@@ -68,16 +68,14 @@ public enum Operation {
 			return new BigDecimal(Math.cos(b.doubleValue()));
 		}
 	},
-	TG("tg", "tg", 0, OperationType.SECOND) {
-
+	TG("tg", "tg|tan", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
 			return new BigDecimal(Math.tan(b.doubleValue()));
 		}
 
 	},
-	CTG("ctg", "ctg", 0, OperationType.SECOND) {
-
+	CTG("ctg", "ctg|ctan", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
 			return new BigDecimal(Math.cos(b.doubleValue()) / Math.sin(b.doubleValue()));
@@ -97,7 +95,6 @@ public enum Operation {
 		}
 	},
 	ATG("arctg", "arctg", 0, OperationType.SECOND) {
-
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
 			return new BigDecimal(Math.atan(b.doubleValue()));
@@ -105,7 +102,6 @@ public enum Operation {
 
 	},
 	ACTG("arcctg", "arcctg", 0, OperationType.SECOND) {
-
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
 			return new BigDecimal(Math.atan(1 / b.doubleValue()));

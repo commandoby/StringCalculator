@@ -108,7 +108,7 @@ public class ReaderImpl implements Reader {
 		splitOfNumbers(mapOfTextOperands);
 
 		if (currentText.matches("(.*)\\S(.*)")) {
-			throw new InvalidCharacterException(currentText.trim());
+			throw new InvalidCharacterException("Invalid characters: " + currentText.trim());
 		}
 
 		Stream<Map.Entry<Integer, String>> stream = mapOfTextOperands.entrySet().stream()

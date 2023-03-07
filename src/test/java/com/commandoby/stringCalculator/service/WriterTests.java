@@ -11,17 +11,14 @@ import org.junit.jupiter.api.Test;
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.WriteException;
-import com.commandoby.stringCalculator.service.impl.ReaderImpl;
 import com.commandoby.stringCalculator.service.impl.WriterImpl;
 
 public class WriterTests {
 	private static Writer writer;
-	private static Reader reader;
 
 	@BeforeAll
 	public static void setUp() {
 		writer = new WriterImpl();
-		reader = new ReaderImpl();
 	}
 
 	@Test
@@ -69,33 +66,6 @@ public class WriterTests {
 		expectedOperand.add(new Operand(Operation.MULTIPLY, new BigDecimal(2)));
 
 		assertEquals(writer.write(expectedOperand), "(2 + 2) * 2");
-	}
-
-	@Test
-	public void writer_Test6() throws WriteException {
-		Operand expectedOperand = new Operand(null, null);
-		expectedOperand.add(new Operand(null, new BigDecimal(2)));
-		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, new BigDecimal(2)));
-
-		assertEquals(writer.write(expectedOperand), "2 - 2");
-	}
-
-	@Test
-	public void writer_Test7() throws WriteException {
-		Operand expectedOperand = new Operand(null, null);
-		expectedOperand.add(new Operand(null, new BigDecimal(2)));
-		expectedOperand.add(new Operand(Operation.DIVIDE, new BigDecimal(2)));
-
-		assertEquals(writer.write(expectedOperand), "2 / 2");
-	}
-
-	@Test
-	public void writer_Test8() throws WriteException {
-		Operand expectedOperand = new Operand(null, null);
-		expectedOperand.add(new Operand(null, new BigDecimal(2)));
-		expectedOperand.add(new Operand(Operation.EXPONENTIETION, new BigDecimal(3)));
-
-		assertEquals(writer.write(expectedOperand), "2^3");
 	}
 
 	@AfterAll

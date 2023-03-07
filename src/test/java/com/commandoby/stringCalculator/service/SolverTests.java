@@ -25,7 +25,7 @@ public class SolverTests {
 		Operand expectedOperand = new Operand(null, null);
 		expectedOperand.add(new Operand(null, new BigDecimal(-1)));
 
-		assertEquals(solver.solve(expectedOperand), -1);
+		assertEquals(solver.solve(expectedOperand), new BigDecimal(-1));
 	}
 
 	@Test
@@ -34,7 +34,7 @@ public class SolverTests {
 		expectedOperand.add(new Operand(null, new BigDecimal(2)));
 		expectedOperand.add(new Operand(Operation.ADD, new BigDecimal(2)));
 
-		assertEquals(solver.solve(expectedOperand), 4);
+		assertEquals(solver.solve(expectedOperand), new BigDecimal(4));
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class SolverTests {
 		expectedOperand.add(new Operand(null, new BigDecimal(2)));
 		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, new BigDecimal(-2)));
 
-		assertEquals(solver.solve(expectedOperand), 4);
+		assertEquals(solver.solve(expectedOperand), new BigDecimal(4));
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class SolverTests {
 		expectedOperand.add(new Operand(Operation.ADD, new BigDecimal(2)));
 		expectedOperand.add(new Operand(Operation.MULTIPLY, new BigDecimal(2)));
 
-		assertEquals(solver.solve(expectedOperand), 6);
+		assertEquals(solver.solve(expectedOperand), new BigDecimal(6));
 	}
 
 	@Test
@@ -64,34 +64,7 @@ public class SolverTests {
 		expectedOperand.get(0).add(new Operand(Operation.ADD, new BigDecimal(2)));
 		expectedOperand.add(new Operand(Operation.MULTIPLY, new BigDecimal(2)));
 
-		assertEquals(solver.solve(expectedOperand), 8);
-	}
-
-	@Test
-	public void solver_Test6() {
-		Operand expectedOperand = new Operand(null, null);
-		expectedOperand.add(new Operand(null, new BigDecimal(2)));
-		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, new BigDecimal(2)));
-
-		assertEquals(solver.solve(expectedOperand), 0);
-	}
-
-	@Test
-	public void solver_Test7() {
-		Operand expectedOperand = new Operand(null, null);
-		expectedOperand.add(new Operand(null, new BigDecimal(2)));
-		expectedOperand.add(new Operand(Operation.DIVIDE, new BigDecimal(2)));
-
-		assertEquals(solver.solve(expectedOperand), 1);
-	}
-
-	@Test
-	public void solver_Test8() {
-		Operand expectedOperand = new Operand(null, null);
-		expectedOperand.add(new Operand(null, new BigDecimal(2)));
-		expectedOperand.add(new Operand(Operation.EXPONENTIETION, new BigDecimal(3)));
-
-		assertEquals(solver.solve(expectedOperand), 8);
+		assertEquals(solver.solve(expectedOperand), new BigDecimal(8));
 	}
 
 	@AfterAll

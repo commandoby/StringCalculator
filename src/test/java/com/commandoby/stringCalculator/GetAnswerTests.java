@@ -14,7 +14,7 @@ public class GetAnswerTests {
 
 	@ParameterizedTest
 	@CsvFileSource(resources = "/csv/GetAnswerTests.csv", numLinesToSkip = 1)
-	public void getAnswer_Test(String input, double expected) throws InvalidCharacterException, SubEquationException {
+	public void getAnswer_Test(String input, BigDecimal expected) throws InvalidCharacterException, SubEquationException {
 		BigDecimal actualAnswer = Application.getAnswer(input);
 		Assertions.assertEquals(expected, actualAnswer);
 	}
