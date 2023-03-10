@@ -67,13 +67,13 @@ public class Application {
 			SolverImpl.detailedSolution = false;
 			return "Detailed solution is off.\n";
 		}
-		if (text.matches("point\\s\\d+")) {
+		if (text.matches("scale\\s*\\d+")) {
 			Matcher matcher = Pattern.compile("\\d+").matcher(text);
 			if (matcher.find()) {
 				Integer pointNumber = Integer.valueOf(matcher.group());
-				WriterImpl.numbersAfterTheDecimalPoint = pointNumber;
+				WriterImpl.scale = pointNumber;
 			}
-			return "The number of decimal places is set to " + WriterImpl.numbersAfterTheDecimalPoint + ".\n";
+			return "The number of decimal places is set to " + WriterImpl.scale + ".\n";
 		}
 		processAnswer(text);
 		return "";

@@ -11,7 +11,7 @@ import com.commandoby.stringCalculator.exceptions.WriteException;
 import com.commandoby.stringCalculator.service.Writer;
 
 public class WriterImpl implements Writer {
-	public static int numbersAfterTheDecimalPoint = 5;
+	public static int scale = 5;
 	private static List<BigDecimal> decimalList = new ArrayList<>();
 
 	@Override
@@ -26,7 +26,7 @@ public class WriterImpl implements Writer {
 				sb.append(subOperand.getOperation().getText());
 			}
 			if (subOperand.isEmpty()) {
-				sb.append(writeOperandNumber(subOperand.getOperandNumber()));
+				sb.append(writeOperandNumber(subOperand.getOperandNumber()).toString());
 			} else {
 				Writer writer = new WriterImpl();
 				if (subOperand.size() > 1) {
@@ -43,19 +43,19 @@ public class WriterImpl implements Writer {
 	}
 
 	@Override
-	public String writeOperandNumber(BigDecimal number) {
+	public BigDecimal writeOperandNumber(BigDecimal number) {
 		int i = 0;
 
-		while (i < numbersAfterTheDecimalPoint
+		while (i < scale
 				&& number.remainder(decimalList.get(i)).compareTo(BigDecimal.ZERO) != 0) {
 			i++;
 		}
 
-		return number.setScale(i, RoundingMode.HALF_UP).toString();
+		return number.setScale(i, RoundingMode.HALF_UP);
 	}
 
 	private static void updateDecimalList() {
-		while (decimalList.size() < numbersAfterTheDecimalPoint) {
+		while (decimalList.size() < scale) {
 			decimalList.add(new BigDecimal(1).divide(new BigDecimal(10).pow(decimalList.size())));
 		}
 	}

@@ -1,40 +1,43 @@
 package com.commandoby.stringCalculator.enums;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 
 import com.commandoby.stringCalculator.service.impl.WriterImpl;
+
+import ch.obermuhlner.math.big.BigDecimalMath;
 
 public enum Operation {
 
 	EXPONENTIETION("^", "\\^", 1, OperationType.FIRST) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return new BigDecimal(Math.pow(a.doubleValue(), b.doubleValue()));
+			return BigDecimalMath.pow(a, b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 	},
 	MULTIPLY(" * ", "\\*", 2, OperationType.FIRST) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return a.multiply(b);
+			return a.multiply(b).stripTrailingZeros();
 		}
 	},
 	DIVIDE(" / ", "/", 2, OperationType.FIRST) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return a.divide(b, WriterImpl.numbersAfterTheDecimalPoint + 10, RoundingMode.HALF_UP);
+			return a.divide(b, WriterImpl.scale + 10, RoundingMode.HALF_UP).stripTrailingZeros();
 		}
 	},
 	ADD(" + ", "\\+", 3, OperationType.FIRST) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return a.add(b);
+			return a.add(b).stripTrailingZeros();
 		}
 	},
 	FIRST_SUBTRACT(" - ", "-", 3, OperationType.FIRST) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return a.subtract(b);
+			return a.subtract(b).stripTrailingZeros();
 		}
 	},
 	SECOND_SUBTRACT("-", "-", 0, OperationType.SECOND) {
@@ -46,8 +49,8 @@ public enum Operation {
 	DEGREE("°", "°", 0, OperationType.LAST) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return b.multiply(new BigDecimal(Math.PI)).divide(new BigDecimal(180),
-					WriterImpl.numbersAfterTheDecimalPoint + 10, RoundingMode.HALF_UP);
+			return b.multiply(BigDecimalMath.pi(new MathContext(WriterImpl.scale + 20)))
+					.divide(new BigDecimal(180), WriterImpl.scale + 20, RoundingMode.HALF_UP).stripTrailingZeros();
 		}
 	},
 	PERCENT("%", "%", 0, OperationType.LAST) {
@@ -59,52 +62,52 @@ public enum Operation {
 	SIN("sin", "sin", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return new BigDecimal(Math.sin(b.doubleValue()));
+			return BigDecimalMath.sin(b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 	},
 	COS("cos", "cos", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return new BigDecimal(Math.cos(b.doubleValue()));
+			return BigDecimalMath.cos(b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 	},
 	TG("tg", "tg|tan", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return new BigDecimal(Math.tan(b.doubleValue()));
+			return BigDecimalMath.tan(b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 
 	},
 	CTG("ctg", "ctg|ctan", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return new BigDecimal(Math.cos(b.doubleValue()) / Math.sin(b.doubleValue()));
+			return BigDecimalMath.cot(b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 
 	},
-	ASIN("arcsin", "arcsin", 0, OperationType.SECOND) {
+	ASIN("arcsin", "arcsin|asin", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return new BigDecimal(Math.asin(b.doubleValue()));
+			return BigDecimalMath.asin(b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 	},
-	ACOS("arccos", "arccos", 0, OperationType.SECOND) {
+	ACOS("arccos", "arccos|acos", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return new BigDecimal(Math.acos(b.doubleValue()));
+			return BigDecimalMath.acos(b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 	},
-	ATG("arctg", "arctg", 0, OperationType.SECOND) {
+	ATG("arctg", "arctg|atg", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return new BigDecimal(Math.atan(b.doubleValue()));
+			return BigDecimalMath.atan(b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 
 	},
-	ACTG("arcctg", "arcctg", 0, OperationType.SECOND) {
+	ACTG("arcctg", "arcctg|actg", 0, OperationType.SECOND) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
-			return new BigDecimal(Math.atan(1 / b.doubleValue()));
+			return BigDecimalMath.acot(b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 
 	};

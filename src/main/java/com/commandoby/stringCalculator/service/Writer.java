@@ -7,6 +7,6 @@ import com.commandoby.stringCalculator.exceptions.WriteException;
 
 public interface Writer {
 	String write(Operand operand) throws WriteException;
-	
-	String writeOperandNumber(BigDecimal number);
+
+	BigDecimal writeOperandNumber(BigDecimal number);
 }
