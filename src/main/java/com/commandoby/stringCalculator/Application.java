@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,8 +28,6 @@ public class Application {
 	private static Scanner scanner = new Scanner(System.in);
 
 	public static boolean console = false;
-	public static String consoleText = START + "\n";
-	public static List<String> consoleListHistory = new ArrayList<>();
 
 	public static void main(String[] args) {
 
@@ -80,34 +76,25 @@ public class Application {
 	}
 
 	private static void processAnswer(String text) {
-		BigDecimal answer = null;
-
 		try {
 			Operand operand = reader.read(text);
-
-			answer = solver.solve(operand.clone());
+			BigDecimal answer = solver.solve(operand.clone());
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			print(answerText + "\n");
 		} catch (Exception e) {
 			log.error("Error text: " + text);
 			log.error(e);
-			printOnlySwing(e.toString() + "\n");
+			if (!console) {
+				ViewConsoleSwing.print(e.toString() + "\n");
+			}
 		}
 	}
 
 	public static void print(String text) {
-		consoleText += text;
 		if (console) {
 			System.out.print(text);
 		} else {
-			ViewConsoleSwing.print();
-		}
-	}
-
-	public static void printOnlySwing(String text) {
-		consoleText += text;
-		if (!console) {
-			ViewConsoleSwing.print();
+			ViewConsoleSwing.print(text);
 		}
 	}
 
@@ -123,7 +110,9 @@ public class Application {
 			}
 		} catch (IOException e) {
 			log.error(e);
-			printOnlySwing(e.toString() + "\n");
+			if (!console) {
+				ViewConsoleSwing.print(e.toString() + "\n");
+			}
 		}
 
 		return stringBuilder.toString();

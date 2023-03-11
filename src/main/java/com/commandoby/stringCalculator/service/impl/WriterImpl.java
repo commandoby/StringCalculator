@@ -2,8 +2,6 @@ package com.commandoby.stringCalculator.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.OperationType;
@@ -12,16 +10,12 @@ import com.commandoby.stringCalculator.service.Writer;
 
 public class WriterImpl implements Writer {
 	public static int scale = 5;
-	private static List<BigDecimal> decimalList = new ArrayList<>();
 
 	@Override
 	public String write(Operand operand) throws WriteException {
 		StringBuilder sb = new StringBuilder();
 
-		updateDecimalList();
-
 		for (Operand subOperand : operand) {
-
 			if (subOperand.getOperation() != null && subOperand.getOperation().getType() != OperationType.LAST) {
 				sb.append(subOperand.getOperation().getText());
 			}
@@ -44,19 +38,9 @@ public class WriterImpl implements Writer {
 
 	@Override
 	public BigDecimal writeOperandNumber(BigDecimal number) {
-		int i = 0;
-
-		while (i < scale
-				&& number.remainder(decimalList.get(i)).compareTo(BigDecimal.ZERO) != 0) {
-			i++;
+		if (number.remainder(new BigDecimal(1)).compareTo(BigDecimal.ZERO) == 0) {
+			return number.setScale(0);
 		}
-
-		return number.setScale(i, RoundingMode.HALF_UP);
-	}
-
-	private static void updateDecimalList() {
-		while (decimalList.size() < scale) {
-			decimalList.add(new BigDecimal(1).divide(new BigDecimal(10).pow(decimalList.size())));
-		}
+		return number.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
 	}
 }

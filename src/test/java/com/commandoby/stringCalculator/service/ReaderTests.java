@@ -3,12 +3,9 @@ package com.commandoby.stringCalculator.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.commandoby.stringCalculator.components.Operand;
@@ -28,7 +25,7 @@ public class ReaderTests {
 	@Test
 	public void reader_Test1() throws InvalidCharacterException, SubEquationException {
 		Operand expected = new Operand(null, null);
-		expected.add(new Operand(Operation.SECOND_SUBTRACT, new BigDecimal(1)));
+		expected.add(new Operand(null, new BigDecimal(-1)));
 
 		Operand actual = reader.read("-1");
 		assertEquals(expected, actual);

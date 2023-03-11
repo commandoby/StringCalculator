@@ -21,19 +21,12 @@ public class SolverImpl implements Solver {
 
 	@Override
 	public BigDecimal solve(Operand operand) throws ArithmeticException {
-		Solver solver = new SolverImpl();
-
 		if (staticOperand == null || staticOperand.isEmpty()) {
 			staticOperand = operand;
 		}
 
 		if (!operand.isEmpty()) {
-			for (int i = 0; i < operand.size(); i++) {
-				if (operand.get(i).size() > 0) {
-					operand.get(i).setOperandNumber(solver.solve(operand.get(i)));
-					operand.get(i).clear();
-				}
-			}
+			solveInternalOperands(operand);
 
 			while (operand.size() > 1 || operand.get(0).getOperation() != null) {
 				solverLoop(operand);
@@ -46,6 +39,17 @@ public class SolverImpl implements Solver {
 		}
 
 		return operand.getOperandNumber();
+	}
+	
+	private void solveInternalOperands(Operand operand) {
+		Solver solver = new SolverImpl();
+		
+		for (int i = 0; i < operand.size(); i++) {
+			if (operand.get(i).size() > 0) {
+				operand.get(i).setOperandNumber(solver.solve(operand.get(i)));
+				operand.get(i).clear();
+			}
+		}
 	}
 
 	private void solverLoop(Operand operand) throws ArithmeticException {

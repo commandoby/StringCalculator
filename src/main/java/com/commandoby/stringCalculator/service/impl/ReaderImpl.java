@@ -93,10 +93,8 @@ public class ReaderImpl implements Reader {
 			operand.add(inclusiveOperand);
 			inclusiveOperand = new Operand(null, null);
 		}
-
-		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(FIRST_SUBTRACT)) {
-			operand.get(0).setOperation(SECOND_SUBTRACT);
-		}
+		
+		checkSubstract(operand);
 
 		return operand;
 	}
@@ -172,7 +170,6 @@ public class ReaderImpl implements Reader {
 		Matcher matcher = splitOfNumbersPattern.matcher(currentText);
 		while (matcher.find()) {
 			map.put(matcher.start(), matcher.group());
-
 			changeCurrentText(matcher.group());
 		}
 	}
@@ -246,6 +243,17 @@ public class ReaderImpl implements Reader {
 			BigDecimal value = new BigDecimal(decimalPointMatcher.replaceAll("."));
 
 			inclusiveOperand.setOperandNumber(value);
+		}
+	}
+	
+	private void checkSubstract(Operand operand) {
+		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(FIRST_SUBTRACT)) {
+			operand.get(0).setOperation(SECOND_SUBTRACT);
+		}
+		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(SECOND_SUBTRACT)
+				&& operand.get(0).getOperandNumber() != null) {
+			operand.get(0).setOperation(null);
+			operand.get(0).setOperandNumber(operand.get(0).getOperandNumber().multiply(new BigDecimal(-1)));
 		}
 	}
 }

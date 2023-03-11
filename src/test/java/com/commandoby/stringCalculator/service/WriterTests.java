@@ -68,6 +68,16 @@ public class WriterTests {
 		assertEquals(writer.write(expectedOperand), "(2 + 2) * 2");
 	}
 
+	@Test
+	public void writeOperandNumber_Test1() {
+		assertEquals(writer.writeOperandNumber(new BigDecimal("1.25000")), new BigDecimal("1.25"));
+	}
+
+	@Test
+	public void writeOperandNumber_Test2() {
+		assertEquals(writer.writeOperandNumber(new BigDecimal("1.23456789")), new BigDecimal("1.23457"));
+	}
+
 	@AfterAll
 	public static void tearDown() {
 		System.out.println("All Writer tests are finished!");
