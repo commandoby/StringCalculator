@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,15 +22,17 @@ public class ViewConsoleSwing implements Runnable {
 	private JTextField enterField;
 	private static JTextArea textArea;
 
-	private int consoleListHistoryNumber = 0;
+	private static String consoleText = Application.START + "\n";
+	public static List<String> history = new ArrayList<>();
+	private int historyNumber = 0;
 
 	private ActionListener actionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("enterField")) {
-				Application.consoleListHistory.add(enterField.getText());
-				consoleListHistoryNumber = Application.consoleListHistory.size();
-				Application.printOnlySwing("You entered: " + enterField.getText() + "\n");
+				history.add(enterField.getText());
+				historyNumber = history.size();
+				print("You entered: " + enterField.getText() + "\n");
 				Application.print(Application.textAnalysis(enterField.getText()) + "\n");
 				enterField.setText("");
 			}
@@ -39,17 +43,17 @@ public class ViewConsoleSwing implements Runnable {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == 38 || e.getKeyCode() == 33) {
-				if (consoleListHistoryNumber > 0) {
-					enterField.setText(Application.consoleListHistory.get(--consoleListHistoryNumber));
+				if (historyNumber > 0) {
+					enterField.setText(history.get(--historyNumber));
 				}
 			}
 			if (e.getKeyCode() == 40 || e.getKeyCode() == 34) {
-				if (consoleListHistoryNumber >= Application.consoleListHistory.size() - 1) {
-					consoleListHistoryNumber = Application.consoleListHistory.size();
+				if (historyNumber >= history.size() - 1) {
+					historyNumber = history.size();
 					enterField.setText("");
 				}
-				if (consoleListHistoryNumber < Application.consoleListHistory.size() - 1) {
-					enterField.setText(Application.consoleListHistory.get(++consoleListHistoryNumber));
+				if (historyNumber < history.size() - 1) {
+					enterField.setText(history.get(++historyNumber));
 				}
 			}
 		}
@@ -68,7 +72,7 @@ public class ViewConsoleSwing implements Runnable {
 	private void addComponents() {
 		textArea = new JTextArea();
 		textArea.setEditable(false);
-		textArea.setText(Application.consoleText);
+		textArea.setText(consoleText);
 		frame.add(new JScrollPane(textArea));
 
 		JPanel downPanel = new JPanel(new BorderLayout());
@@ -83,7 +87,8 @@ public class ViewConsoleSwing implements Runnable {
 		frame.add(downPanel, BorderLayout.SOUTH);
 	}
 
-	public static void print() {
-		textArea.setText(Application.consoleText);
+	public static void print(String text) {
+		consoleText += text;
+		textArea.setText(consoleText);
 	}
 }

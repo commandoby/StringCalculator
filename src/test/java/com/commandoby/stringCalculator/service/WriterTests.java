@@ -2,6 +2,8 @@ package com.commandoby.stringCalculator.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -9,91 +11,71 @@ import org.junit.jupiter.api.Test;
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
 import com.commandoby.stringCalculator.exceptions.WriteException;
-import com.commandoby.stringCalculator.service.impl.ReaderImpl;
 import com.commandoby.stringCalculator.service.impl.WriterImpl;
 
 public class WriterTests {
 	private static Writer writer;
-	private static Reader reader;
 
 	@BeforeAll
 	public static void setUp() {
 		writer = new WriterImpl();
-		reader = new ReaderImpl();
 	}
 
 	@Test
 	public void writer_Test1() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, -1));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(-1)));
 
 		assertEquals(writer.write(expectedOperand), "-1");
 	}
 
 	@Test
 	public void writer_Test2() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.ADD, 2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.ADD, new BigDecimal(2)));
 
 		assertEquals(writer.write(expectedOperand), "2 + 2");
 	}
 
 	@Test
 	public void writer_Test3() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.SUBTRACT, -2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.FIRST_SUBTRACT, new BigDecimal(-2)));
 
 		assertEquals(writer.write(expectedOperand), "2 - -2");
 	}
 
 	@Test
 	public void writer_Test4() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.ADD, 2));
-		expectedOperand.add(new Operand(Operation.MULTIPLY, 2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.ADD, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.MULTIPLY, new BigDecimal(2)));
 
 		assertEquals(writer.write(expectedOperand), "2 + 2 * 2");
 	}
 
 	@Test
 	public void writer_Test5() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 0));
-		expectedOperand.get(0).add(new Operand(null, 2));
-		expectedOperand.get(0).add(new Operand(Operation.ADD, 2));
-		expectedOperand.add(new Operand(Operation.MULTIPLY, 2));
+		Operand expectedOperand = new Operand(null, null);
+		expectedOperand.add(new Operand(null, null));
+		expectedOperand.get(0).add(new Operand(null, new BigDecimal(2)));
+		expectedOperand.get(0).add(new Operand(Operation.ADD, new BigDecimal(2)));
+		expectedOperand.add(new Operand(Operation.MULTIPLY, new BigDecimal(2)));
 
 		assertEquals(writer.write(expectedOperand), "(2 + 2) * 2");
 	}
 
 	@Test
-	public void writer_Test6() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.SUBTRACT, 2));
-
-		assertEquals(writer.write(expectedOperand), "2 - 2");
+	public void writeOperandNumber_Test1() {
+		assertEquals(writer.writeOperandNumber(new BigDecimal("1.25000")), new BigDecimal("1.25"));
 	}
 
 	@Test
-	public void writer_Test7() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.DIVIDE, 2));
-
-		assertEquals(writer.write(expectedOperand), "2 / 2");
-	}
-
-	@Test
-	public void writer_Test8() throws WriteException {
-		Operand expectedOperand = new Operand(null, 0);
-		expectedOperand.add(new Operand(null, 2));
-		expectedOperand.add(new Operand(Operation.EXPONENTIETION, 3));
-
-		assertEquals(writer.write(expectedOperand), "2^3");
+	public void writeOperandNumber_Test2() {
+		assertEquals(writer.writeOperandNumber(new BigDecimal("1.23456789")), new BigDecimal("1.23457"));
 	}
 
 	@AfterAll

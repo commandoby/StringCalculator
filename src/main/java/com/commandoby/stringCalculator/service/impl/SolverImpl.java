@@ -1,10 +1,13 @@
 package com.commandoby.stringCalculator.service.impl;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 
 import com.commandoby.stringCalculator.Application;
 import com.commandoby.stringCalculator.components.Operand;
 import com.commandoby.stringCalculator.enums.Operation;
+import com.commandoby.stringCalculator.enums.OperationType;
 import com.commandoby.stringCalculator.exceptions.WriteException;
 import com.commandoby.stringCalculator.service.Solver;
 import com.commandoby.stringCalculator.service.Writer;
@@ -15,27 +18,17 @@ public class SolverImpl implements Solver {
 
 	public static boolean detailedSolution = false;
 	private static Operand staticOperand = null;
-	
-	Operation[][] operationPriority = new Operation[][] { { Operation.EXPONENTIETION },
-			{ Operation.MULTIPLY, Operation.DIVIDE }, { Operation.ADD, Operation.SUBTRACT } };
 
 	@Override
-	public double solve(Operand operand) {
-		Solver solver = new SolverImpl();
-
+	public BigDecimal solve(Operand operand) throws ArithmeticException {
 		if (staticOperand == null || staticOperand.isEmpty()) {
 			staticOperand = operand;
 		}
 
 		if (!operand.isEmpty()) {
-			for (int i = 0; i < operand.size(); i++) {
-				if (operand.get(i).size() > 0) {
-					operand.get(i).setOperandNumber(solver.solve(operand.get(i)));
-					operand.get(i).clear();
-				}
-			}
+			solveInternalOperands(operand);
 
-			while (operand.size() > 1) {
+			while (operand.size() > 1 || operand.get(0).getOperation() != null) {
 				solverLoop(operand);
 			}
 
@@ -47,13 +40,25 @@ public class SolverImpl implements Solver {
 
 		return operand.getOperandNumber();
 	}
+	
+	private void solveInternalOperands(Operand operand) {
+		Solver solver = new SolverImpl();
+		
+		for (int i = 0; i < operand.size(); i++) {
+			if (operand.get(i).size() > 0) {
+				operand.get(i).setOperandNumber(solver.solve(operand.get(i)));
+				operand.get(i).clear();
+			}
+		}
+	}
 
-	private void solverLoop(Operand operand) {
-		for (Operation[] operationPrioritySublist : operationPriority) {
-			for (int j = 1; j < operand.size(); j++) {
-				for (Operation operation : operationPrioritySublist) {
-					if (operand.get(j).getOperation().equals(operation)) {
-						solveOperand(operand, operation, j);
+	private void solverLoop(Operand operand) throws ArithmeticException {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < operand.size(); j++) {
+				for (Operation operation : Operation.values()) {
+					if (operand.get(j).getOperation() != null && operand.get(j).getOperation().equals(operation)
+							&& operand.get(j).getOperation().getPriority() == i) {
+						solveOperand(operand, j);
 						j = 0;
 						break;
 					}
@@ -62,28 +67,43 @@ public class SolverImpl implements Solver {
 		}
 	}
 
-	private void solveOperand(Operand operand, Operation operation, int operandNumber) {
-		Operand operandFirst = operand.get(operandNumber - 1).clone();
+	private void solveOperand(Operand operand, int operandNumber) throws ArithmeticException {
 		Operand operandSecond = operand.get(operandNumber).clone();
-		double opernadNumberResult = operation.action(operandFirst.getOperandNumber(),
-				operandSecond.getOperandNumber());
-		operand.get(operandNumber - 1).setOperandNumber(opernadNumberResult);
-		operand.remove(operandNumber);
 
-		if (detailedSolution) {
-			descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
+		if (operandNumber > 0 && operand.get(operandNumber).getOperation().getType() == OperationType.FIRST) {
+			Operand operandFirst = operand.get(operandNumber - 1).clone();
+			BigDecimal opernadNumberResult = operand.get(operandNumber).getOperation()
+					.action(operandFirst.getOperandNumber(), operandSecond.getOperandNumber());
+			operand.get(operandNumber - 1).setOperandNumber(opernadNumberResult);
+			operand.remove(operandNumber);
+
+			if (detailedSolution) {
+				descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
+			}
+		} else {
+			BigDecimal opernadNumberResult = operand.get(operandNumber).getOperation().action(null,
+					operand.get(operandNumber).getOperandNumber());
+			operand.get(operandNumber).setOperandNumber(opernadNumberResult);
+			operand.get(operandNumber).setOperation(null);
+
+			if (detailedSolution) {
+				descriptionSolution(null, operandSecond, opernadNumberResult);
+			}
 		}
 	}
 
-	private void descriptionSolution(Operand operandFirst, Operand operandSecond, double result) {
+	private void descriptionSolution(Operand operandFirst, Operand operandSecond, BigDecimal result) {
 		try {
-			Operand operand = new Operand(null, 0);
-			operand.add(operandFirst);
-			operand.add(operandSecond);
-			operand.get(0).setOperation(null);
+			Operand operand = new Operand(null, null);
 
-			String detailedSolutionText = "[" + writer.write(operand) + " = " + writer.writeOperandNumber(result)
-					+ "]  " + writer.write(staticOperand);
+			if (operandFirst != null) {
+				operand.add(operandFirst);
+				operand.get(0).setOperation(null);
+			}
+			operand.add(operandSecond);
+
+			String detailedSolutionText = " [ " + writer.write(operand) + " = " + writer.writeOperandNumber(result)
+					+ " ]  " + writer.write(staticOperand);
 			Application.print(detailedSolutionText + "\n");
 		} catch (WriteException e) {
 			log.error(e);

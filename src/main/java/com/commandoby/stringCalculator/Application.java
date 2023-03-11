@@ -1,7 +1,9 @@
 package com.commandoby.stringCalculator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,11 +19,7 @@ import com.commandoby.stringCalculator.service.impl.*;
 import com.commandoby.stringCalculator.swing.ViewConsoleSwing;
 
 public class Application {
-	private static final String HELP = "Commands:\n" + "exit - complete the program;\n"
-			+ "help - help for valid commands;\n" + "point (n) - numbers after the decimal point (Default: 2);\n"
-			+ "more on/more off - Detailed solution.\n\n" + "Correct characters: + - * / ( ).\n\n"
-			+ "Example: 1.5 * (2 - 3) + 4^0.5\n";
-	public static final String START = "Welcome to the program for calculating equations. v1.02\n";
+	public static final String START = "Welcome to the program for calculating equations. For help write 'help'. v1.03\n";
 
 	private static Reader reader = new ReaderImpl();
 	private static Solver solver = new SolverImpl();
@@ -30,8 +28,6 @@ public class Application {
 	private static Scanner scanner = new Scanner(System.in);
 
 	public static boolean console = false;
-	public static String consoleText = START + "\n";
-	public static List<String> consoleListHistory = new ArrayList<>();
 
 	public static void main(String[] args) {
 
@@ -52,7 +48,7 @@ public class Application {
 
 	public static String textAnalysis(String text) {
 		if (text.matches("help")) {
-			return HELP;
+			return readOfHelp();
 		}
 		if (text.matches("exit")) {
 			scanner.close();
@@ -67,53 +63,63 @@ public class Application {
 			SolverImpl.detailedSolution = false;
 			return "Detailed solution is off.\n";
 		}
-		if (text.matches("point\\s\\d+")) {
+		if (text.matches("scale\\s*\\d+")) {
 			Matcher matcher = Pattern.compile("\\d+").matcher(text);
 			if (matcher.find()) {
 				Integer pointNumber = Integer.valueOf(matcher.group());
-				WriterImpl.numbersAfterTheDecimalPoint = pointNumber;
+				WriterImpl.scale = pointNumber;
 			}
-			return "The number of decimal places is set to " + WriterImpl.numbersAfterTheDecimalPoint + ".\n";
+			return "The number of decimal places is set to " + WriterImpl.scale + ".\n";
 		}
 		processAnswer(text);
 		return "";
 	}
 
 	private static void processAnswer(String text) {
-		double answer = 0;
-
 		try {
 			Operand operand = reader.read(text);
-			
-			answer = solver.solve(operand.clone());
+			BigDecimal answer = solver.solve(operand.clone());
 			String answerText = writer.write(operand) + " = " + writer.writeOperandNumber(answer);
 			print(answerText + "\n");
-		} catch (InvalidCharacterException | SubEquationException | WriteException
-				| NumberFormatException e) {
+		} catch (Exception e) {
+			log.error("Error text: " + text);
 			log.error(e);
-			printOnlySwing(e.toString() + "\n");
+			if (!console) {
+				ViewConsoleSwing.print(e.toString() + "\n");
+			}
 		}
-	}
-
-	//test's method
-	static double getAnswer(String text)
-			throws InvalidCharacterException, SubEquationException {
-		return solver.solve(reader.read(text));
 	}
 
 	public static void print(String text) {
-		consoleText += text;
 		if (console) {
 			System.out.print(text);
 		} else {
-			ViewConsoleSwing.print();
+			ViewConsoleSwing.print(text);
 		}
 	}
 
-	public static void printOnlySwing(String text) {
-		consoleText += text;
-		if (!console) {
-			ViewConsoleSwing.print();
+	private static String readOfHelp() {
+		InputStreamReader inputStreamReader = new InputStreamReader(
+				ClassLoader.getSystemClassLoader().getResourceAsStream("Help.txt"));
+		StringBuilder stringBuilder = new StringBuilder();
+
+		try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				stringBuilder.append(line + "\n");
+			}
+		} catch (IOException e) {
+			log.error(e);
+			if (!console) {
+				ViewConsoleSwing.print(e.toString() + "\n");
+			}
 		}
+
+		return stringBuilder.toString();
+	}
+
+	// test's method
+	static BigDecimal getAnswer(String text) throws InvalidCharacterException, SubEquationException {
+		return solver.solve(reader.read(text));
 	}
 }

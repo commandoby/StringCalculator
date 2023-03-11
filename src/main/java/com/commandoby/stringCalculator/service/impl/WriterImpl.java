@@ -1,55 +1,46 @@
 package com.commandoby.stringCalculator.service.impl;
 
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import com.commandoby.stringCalculator.components.Operand;
-import com.commandoby.stringCalculator.enums.Operation;
+import com.commandoby.stringCalculator.enums.OperationType;
 import com.commandoby.stringCalculator.exceptions.WriteException;
-import com.commandoby.stringCalculator.service.Reader;
 import com.commandoby.stringCalculator.service.Writer;
 
 public class WriterImpl implements Writer {
-	public static int numbersAfterTheDecimalPoint = 2;
+	public static int scale = 5;
 
 	@Override
 	public String write(Operand operand) throws WriteException {
-		Writer writer = new WriterImpl();
 		StringBuilder sb = new StringBuilder();
 
-		for (int i = 0; i < operand.size(); i++) {
-			Operand subOperand = operand.get(i);
-
-			if (subOperand.getOperation() != null) {
-				sb.append(writeOperation(subOperand.getOperation()));
+		for (Operand subOperand : operand) {
+			if (subOperand.getOperation() != null && subOperand.getOperation().getType() != OperationType.LAST) {
+				sb.append(subOperand.getOperation().getText());
 			}
 			if (subOperand.isEmpty()) {
-				sb.append(writeOperandNumber(subOperand.getOperandNumber()));
+				sb.append(writeOperandNumber(subOperand.getOperandNumber()).toString());
 			} else {
-				sb.append("(" + writer.write(subOperand) + ")");
+				Writer writer = new WriterImpl();
+				if (subOperand.size() > 1) {
+					sb.append("(" + writer.write(subOperand) + ")");
+				} else {
+					sb.append(writer.write(subOperand));
+				}
+			}
+			if (subOperand.getOperation() != null && subOperand.getOperation().getType() == OperationType.LAST) {
+				sb.append(subOperand.getOperation().getText());
 			}
 		}
 		return sb.substring(0);
 	}
 
 	@Override
-	public String writeOperandNumber(double number) {
-		if (number % 1 == 0) {
-			return String.format("%1.0f", number);
+	public BigDecimal writeOperandNumber(BigDecimal number) {
+		if (number.remainder(new BigDecimal(1)).compareTo(BigDecimal.ZERO) == 0) {
+			return number.setScale(0);
 		}
-		return String.format("%1." + numbersAfterTheDecimalPoint + "f", number);
-	}
-
-	private String writeOperation(Operation operation) throws WriteException {
-		/*
-		 * for (Map.Entry<Operation, String> entryOperation:
-		 * ReaderImpl.symbolsOfOperations.entrySet()) { if
-		 * (entryOperation.getKey().equals(operation)) { return
-		 * entryOperation.getValue(); } }
-		 */
-		String textOperation = ReaderImpl.symbolsOfOperations.get(operation);
-		if (textOperation != null) {
-			return textOperation;
-		}
-		throw new WriteException("Operation read error.");
+		return number.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros();
 	}
 }
