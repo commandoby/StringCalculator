@@ -16,6 +16,11 @@ public class WriterImpl implements Writer {
 		StringBuilder sb = new StringBuilder();
 
 		for (Operand subOperand : operand) {
+			if (subOperand.getOperandNumber() != null && subOperand.size() > 0) {
+				throw new WriteException(
+						"Number: " + subOperand.getOperandNumber() + " and list size " + subOperand.size());
+			}
+
 			if (subOperand.getOperation() != null && subOperand.getOperation().getType() != OperationType.LAST) {
 				sb.append(subOperand.getOperation().getText());
 			}

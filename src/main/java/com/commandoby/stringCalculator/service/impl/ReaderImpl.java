@@ -93,7 +93,7 @@ public class ReaderImpl implements Reader {
 			operand.add(inclusiveOperand);
 			inclusiveOperand = new Operand(null, null);
 		}
-		
+
 		checkSubstract(operand);
 
 		return operand;
@@ -245,7 +245,7 @@ public class ReaderImpl implements Reader {
 			inclusiveOperand.setOperandNumber(value);
 		}
 	}
-	
+
 	private void checkSubstract(Operand operand) {
 		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(FIRST_SUBTRACT)) {
 			operand.get(0).setOperation(SECOND_SUBTRACT);

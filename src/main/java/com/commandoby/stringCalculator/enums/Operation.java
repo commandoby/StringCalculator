@@ -16,7 +16,7 @@ public enum Operation {
 			return BigDecimalMath.pow(a, b, new MathContext(WriterImpl.scale + 10)).stripTrailingZeros();
 		}
 	},
-	MULTIPLY(" * ", "\\*", 2, OperationType.FIRST) {
+	MULTIPLY(" * ", "\\*|x", 2, OperationType.FIRST) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
 			return a.multiply(b).stripTrailingZeros();
@@ -46,7 +46,7 @@ public enum Operation {
 			return b.multiply(new BigDecimal(-1));
 		}
 	},
-	DEGREE("°", "°", 0, OperationType.LAST) {
+	DEGREE("°", "°|deg", 0, OperationType.LAST) {
 		@Override
 		public BigDecimal action(BigDecimal a, BigDecimal b) {
 			return b.multiply(BigDecimalMath.pi(new MathContext(WriterImpl.scale + 20)))
