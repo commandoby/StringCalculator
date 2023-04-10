@@ -117,9 +117,4 @@ public class Application {
 
 		return stringBuilder.toString();
 	}
-
-	// test's method
-	static BigDecimal getAnswer(String text) throws InvalidCharacterException, SubEquationException {
-		return solver.solve(reader.read(text));
-	}
 }
