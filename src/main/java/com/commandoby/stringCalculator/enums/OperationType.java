@@ -1,5 +1,5 @@
 package com.commandoby.stringCalculator.enums;
 
 public enum OperationType {
-	FIRST, SECOND, LAST;
+	FIRST, SECOND, LAST, SPECIFIC;
 }

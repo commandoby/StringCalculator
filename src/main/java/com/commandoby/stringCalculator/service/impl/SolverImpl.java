@@ -53,7 +53,7 @@ public class SolverImpl implements Solver {
 	}
 
 	private void solverLoop(Operand operand) throws ArithmeticException {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < operand.size(); j++) {
 				for (Operation operation : Operation.values()) {
 					if (operand.get(j).getOperation() != null && operand.get(j).getOperation().equals(operation)
