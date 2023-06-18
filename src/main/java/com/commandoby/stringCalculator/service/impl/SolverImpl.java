@@ -40,10 +40,10 @@ public class SolverImpl implements Solver {
 
 		return operand.getOperandNumber();
 	}
-	
+
 	private void solveInternalOperands(Operand operand) {
 		Solver solver = new SolverImpl();
-		
+
 		for (int i = 0; i < operand.size(); i++) {
 			if (operand.get(i).size() > 0) {
 				operand.get(i).setOperandNumber(solver.solve(operand.get(i)));
@@ -81,14 +81,14 @@ public class SolverImpl implements Solver {
 				descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
 			}
 		} else {
-			BigDecimal opernadNumberResult = operand.get(operandNumber).getOperation().action(null,
-					operand.get(operandNumber).getOperandNumber());
-			operand.get(operandNumber).setOperandNumber(opernadNumberResult);
-			operand.get(operandNumber).setOperation(null);
+				BigDecimal operandNumberResult = operand.get(operandNumber).getOperation().action(null,
+						operand.get(operandNumber).getOperandNumber());
+				operand.get(operandNumber).setOperandNumber(operandNumberResult);
+				operand.get(operandNumber).setOperation(null);
 
-			if (detailedSolution) {
-				descriptionSolution(null, operandSecond, opernadNumberResult);
-			}
+				if (detailedSolution) {
+					descriptionSolution(null, operandSecond, operandNumberResult);
+				}
 		}
 	}
 
