@@ -4,20 +4,38 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
 import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.exceptions.SubEquationException;
+import com.commandoby.stringCalculator.service.Reader;
+import com.commandoby.stringCalculator.service.Solver;
+import com.commandoby.stringCalculator.service.impl.ReaderImpl;
+import com.commandoby.stringCalculator.service.impl.SolverImpl;
 
 public class GetAnswerTests {
+	private static Reader reader;
+	private static Solver solver;
+
+	@BeforeAll
+	public static void setUp() {
+		reader = new ReaderImpl();
+		solver = new SolverImpl();
+	}
 
 	@ParameterizedTest
 	@CsvFileSource(resources = "/csv/GetAnswerTests.csv", numLinesToSkip = 1)
 	public void getAnswer_Test(String input, BigDecimal expected)
 			throws InvalidCharacterException, SubEquationException {
-		BigDecimal actualAnswer = Application.getAnswer(input);
+		BigDecimal actualAnswer = getAnswer(input);
 		Assertions.assertEquals(expected, actualAnswer);
+	}
+
+	static BigDecimal getAnswer(String text)
+			throws ArithmeticException, InvalidCharacterException, SubEquationException {
+		return solver.solve(reader.read(text));
 	}
 
 	@AfterAll

@@ -19,8 +19,6 @@ import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.exceptions.SubEquationException;
 import com.commandoby.stringCalculator.service.Reader;
 
-import static com.commandoby.stringCalculator.enums.Operation.*;
-
 public class ReaderImpl implements Reader {
 	private Operand inclusiveOperand = new Operand(null, null);
 	private String currentText;
@@ -93,8 +91,8 @@ public class ReaderImpl implements Reader {
 			operand.add(inclusiveOperand);
 			inclusiveOperand = new Operand(null, null);
 		}
-		
-		checkSubstract(operand);
+
+		operand.checkSubstract();
 
 		return operand;
 	}
@@ -243,17 +241,6 @@ public class ReaderImpl implements Reader {
 			BigDecimal value = new BigDecimal(decimalPointMatcher.replaceAll("."));
 
 			inclusiveOperand.setOperandNumber(value);
-		}
-	}
-	
-	private void checkSubstract(Operand operand) {
-		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(FIRST_SUBTRACT)) {
-			operand.get(0).setOperation(SECOND_SUBTRACT);
-		}
-		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(SECOND_SUBTRACT)
-				&& operand.get(0).getOperandNumber() != null) {
-			operand.get(0).setOperation(null);
-			operand.get(0).setOperandNumber(operand.get(0).getOperandNumber().multiply(new BigDecimal(-1)));
 		}
 	}
 }

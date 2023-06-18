@@ -32,6 +32,17 @@ public class Operand extends ArrayList<Operand> implements Serializable {
 	public void setOperandNumber(BigDecimal operandNumber) {
 		this.operandNumber = operandNumber;
 	}
+	
+	public void checkSubstract() {
+		if (get(0).getOperation() != null && get(0).getOperation().equals(Operation.FIRST_SUBTRACT)) {
+			get(0).setOperation(Operation.SECOND_SUBTRACT);
+		}
+		if (get(0).getOperation() != null && get(0).getOperation().equals(Operation.SECOND_SUBTRACT)
+				&& get(0).getOperandNumber() != null) {
+			get(0).setOperation(null);
+			get(0).setOperandNumber(get(0).getOperandNumber().multiply(new BigDecimal(-1)));
+		}
+	}
 
 	@Override
 	public int hashCode() {

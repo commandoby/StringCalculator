@@ -19,7 +19,7 @@ import com.commandoby.stringCalculator.service.impl.*;
 import com.commandoby.stringCalculator.swing.ViewConsoleSwing;
 
 public class Application {
-	public static final String START = "Welcome to the program for calculating equations. For help write 'help'. v1.03\n";
+	public static final String START = "Welcome to the program for calculating equations. For help write 'help'. v1.03a\n";
 
 	private static Reader reader = new ReaderImpl();
 	private static Solver solver = new SolverImpl();
@@ -116,10 +116,5 @@ public class Application {
 		}
 
 		return stringBuilder.toString();
-	}
-
-	// test's method
-	static BigDecimal getAnswer(String text) throws InvalidCharacterException, SubEquationException {
-		return solver.solve(reader.read(text));
 	}
 }
