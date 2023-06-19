@@ -24,16 +24,14 @@ public class WriterImpl implements Writer {
 			if (subOperand.getOperation() != null && subOperand.getOperation().getType() != OperationType.LAST) {
 				sb.append(subOperand.getOperation().getText());
 			}
-			if (subOperand.getOperation() == null || subOperand.getOperation().getType() != OperationType.SPECIFIC) {
-				if (subOperand.isEmpty()) {
-					sb.append(writeOperandNumber(subOperand.getOperandNumber()).toString());
+			if (subOperand.isEmpty()) {
+				sb.append(writeOperandNumber(subOperand.getOperandNumber()).toString());
+			} else {
+				Writer writer = new WriterImpl();
+				if (subOperand.size() > 1) {
+					sb.append("(" + writer.write(subOperand) + ")");
 				} else {
-					Writer writer = new WriterImpl();
-					if (subOperand.size() > 1) {
-						sb.append("(" + writer.write(subOperand) + ")");
-					} else {
-						sb.append(writer.write(subOperand));
-					}
+					sb.append(writer.write(subOperand));
 				}
 			}
 			if (subOperand.getOperation() != null && subOperand.getOperation().getType() == OperationType.LAST) {
