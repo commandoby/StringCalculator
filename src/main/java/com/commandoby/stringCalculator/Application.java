@@ -19,7 +19,7 @@ import com.commandoby.stringCalculator.service.impl.*;
 import com.commandoby.stringCalculator.swing.ViewConsoleSwing;
 
 public class Application {
-	public static final String START = "Welcome to the program for calculating equations. For help write 'help'. v1.03a\n";
+	public static final String START = "Welcome to the program for calculating equations. For help write 'help'. v1.04\n";
 
 	private static Reader reader = new ReaderImpl();
 	private static Solver solver = new SolverImpl();
