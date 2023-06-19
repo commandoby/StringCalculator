@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>StringCalculator</groupId>
 	<artifactId>StringCalculator</artifactId>
-	<version>1.03a-SNAPSHOT</version>
+	<version>1.04-SNAPSHOT</version>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
