@@ -81,14 +81,14 @@ public class SolverImpl implements Solver {
 				descriptionSolution(operandFirst, operandSecond, opernadNumberResult);
 			}
 		} else {
-				BigDecimal operandNumberResult = operand.get(operandNumber).getOperation().action(null,
-						operand.get(operandNumber).getOperandNumber());
-				operand.get(operandNumber).setOperandNumber(operandNumberResult);
-				operand.get(operandNumber).setOperation(null);
+			BigDecimal operandNumberResult = operand.get(operandNumber).getOperation().action(null,
+					operand.get(operandNumber).getOperandNumber());
+			operand.get(operandNumber).setOperandNumber(operandNumberResult);
+			operand.get(operandNumber).setOperation(null);
 
-				if (detailedSolution) {
-					descriptionSolution(null, operandSecond, operandNumberResult);
-				}
+			if (detailedSolution) {
+				descriptionSolution(null, operandSecond, operandNumberResult);
+			}
 		}
 	}
 

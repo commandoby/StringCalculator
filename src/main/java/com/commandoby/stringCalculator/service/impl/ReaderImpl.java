@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.commandoby.stringCalculator.components.Operand;
@@ -19,53 +18,38 @@ import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.exceptions.SubEquationException;
 import com.commandoby.stringCalculator.service.Reader;
 
-import static com.commandoby.stringCalculator.enums.Operation.*;
-
 public class ReaderImpl implements Reader {
 	private Operand inclusiveOperand = new Operand(null, null);
 	private String currentText;
 
-	private static List<Operation> firstOperationList;
-	private static List<Operation> secondOperationList;
-	private static List<Operation> lastOperationList;
-	private static List<Operation> specificOperationList;
 	private static Pattern splitOfSubEquationsPattern;
 	private static Pattern splitOfSubEquationsEndPattern;
 	private static Pattern splitOfNumbersPattern;
 
 	static {
-		firstOperationList = Stream.of(Operation.values()).filter(t -> t.getType() == OperationType.FIRST)
-				.collect(Collectors.toList());
-		secondOperationList = Stream.of(Operation.values()).filter(t -> t.getType() == OperationType.SECOND)
-				.collect(Collectors.toList());
-		lastOperationList = Stream.of(Operation.values()).filter(t -> t.getType() == OperationType.LAST)
-				.collect(Collectors.toList());
-		specificOperationList = Stream.of(Operation.values()).filter(t -> t.getType() == OperationType.SPECIFIC)
-				.collect(Collectors.toList());
-
 		StringBuilder firstBuilder = new StringBuilder();
-		for (Operation s : firstOperationList) {
+		for (Operation s : Operation.getOperationList(OperationType.FIRST)) {
 			if (!firstBuilder.isEmpty()) {
 				firstBuilder.append("|");
 			}
 			firstBuilder.append(s.getPattern());
 		}
 		StringBuilder secondBuilder = new StringBuilder();
-		for (Operation s : secondOperationList) {
+		for (Operation s : Operation.getOperationList(OperationType.SECOND)) {
 			if (!secondBuilder.isEmpty()) {
 				secondBuilder.append("|");
 			}
 			secondBuilder.append(s.getPattern());
 		}
 		StringBuilder lastBuilder = new StringBuilder();
-		for (Operation s : lastOperationList) {
+		for (Operation s : Operation.getOperationList(OperationType.LAST)) {
 			if (!lastBuilder.isEmpty()) {
 				lastBuilder.append("|");
 			}
 			lastBuilder.append(s.getPattern());
 		}
 		StringBuilder specificBuilder = new StringBuilder();
-		for (Operation s : specificOperationList) {
+		for (Operation s : Operation.getOperationList(OperationType.SPECIFIC)) {
 			if (!specificBuilder.isEmpty()) {
 				specificBuilder.append("|");
 			}
@@ -81,10 +65,9 @@ public class ReaderImpl implements Reader {
 
 	@Override
 	public Operand read(String text) throws InvalidCharacterException, SubEquationException {
-		currentText = text;
+		currentText = text.toLowerCase();
 		Operand operand = new Operand(null, null);
 		List<String> textOperands = split();
-		System.out.println(textOperands);
 
 		for (String s : textOperands) {
 			s = readFirstOperation(s);
@@ -107,9 +90,8 @@ public class ReaderImpl implements Reader {
 			inclusiveOperand = new Operand(null, null);
 		}
 
-		checkSubstract(operand);
-
-		System.out.println(operand);
+		operand.checkSubstract();
+		
 		return operand;
 	}
 
@@ -198,7 +180,7 @@ public class ReaderImpl implements Reader {
 	}
 
 	private String readFirstOperation(String text) throws InvalidCharacterException {
-		for (Operation operation : firstOperationList) {
+		for (Operation operation : Operation.getOperationList(OperationType.FIRST)) {
 			Matcher symbolMatcher = Pattern.compile("\\s*" + operation.getPattern()).matcher(text);
 			if (symbolMatcher.find() && symbolMatcher.start() == 0) {
 				inclusiveOperand.setOperation(operation);
@@ -210,7 +192,7 @@ public class ReaderImpl implements Reader {
 	}
 
 	private String readSecondOperation(String text) throws InvalidCharacterException, SubEquationException {
-		for (Operation operation : secondOperationList) {
+		for (Operation operation : Operation.getOperationList(OperationType.SECOND)) {
 			Matcher symbolMatcher = Pattern.compile("\\s*" + operation.getPattern()).matcher(text);
 			if (symbolMatcher.find() && symbolMatcher.start() == 0) {
 				if (inclusiveOperand.getOperation() == null) {
@@ -228,7 +210,7 @@ public class ReaderImpl implements Reader {
 	}
 
 	private String readLastOperation(String text) throws InvalidCharacterException, SubEquationException {
-		for (Operation operation : lastOperationList) {
+		for (Operation operation : Operation.getOperationList(OperationType.LAST)) {
 			Matcher symbolMatcher = Pattern.compile(operation.getPattern() + "\\s*").matcher(text);
 			while (symbolMatcher.find()) {
 				if (symbolMatcher.end() == text.length()) {
@@ -263,7 +245,7 @@ public class ReaderImpl implements Reader {
 	}
 
 	private void readSpecificOperation(String text) throws InvalidCharacterException, SubEquationException {
-		for (Operation operation : specificOperationList) {
+		for (Operation operation : Operation.getOperationList(OperationType.SPECIFIC)) {
 			Matcher symbolMatcher = Pattern.compile("\\s*" + operation.getPattern()).matcher(text);
 			if (symbolMatcher.find() && symbolMatcher.start() == 0) {
 				if (inclusiveOperand.getOperation() == null) {
@@ -273,17 +255,6 @@ public class ReaderImpl implements Reader {
 					inclusiveOperand.addAll(reader.read(text));
 				}
 			}
-		}
-	}
-
-	private void checkSubstract(Operand operand) {
-		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(FIRST_SUBTRACT)) {
-			operand.get(0).setOperation(SECOND_SUBTRACT);
-		}
-		if (operand.get(0).getOperation() != null && operand.get(0).getOperation().equals(SECOND_SUBTRACT)
-				&& operand.get(0).getOperandNumber() != null) {
-			operand.get(0).setOperation(null);
-			operand.get(0).setOperandNumber(operand.get(0).getOperandNumber().multiply(new BigDecimal(-1)));
 		}
 	}
 }
