@@ -12,17 +12,21 @@ import com.commandoby.stringCalculator.exceptions.InvalidCharacterException;
 import com.commandoby.stringCalculator.exceptions.SubEquationException;
 import com.commandoby.stringCalculator.service.Reader;
 import com.commandoby.stringCalculator.service.Solver;
+import com.commandoby.stringCalculator.service.Writer;
 import com.commandoby.stringCalculator.service.impl.ReaderImpl;
 import com.commandoby.stringCalculator.service.impl.SolverImpl;
+import com.commandoby.stringCalculator.service.impl.WriterImpl;
 
 public class GetAnswerTests {
 	private static Reader reader;
 	private static Solver solver;
+	private static Writer writer;
 
 	@BeforeAll
 	public static void setUp() {
 		reader = new ReaderImpl();
 		solver = new SolverImpl();
+		writer = new WriterImpl();
 	}
 
 	@ParameterizedTest
@@ -35,7 +39,7 @@ public class GetAnswerTests {
 
 	static BigDecimal getAnswer(String text)
 			throws ArithmeticException, InvalidCharacterException, SubEquationException {
-		return solver.solve(reader.read(text));
+		return writer.writeOperandNumber(solver.solve(reader.read(text)));
 	}
 
 	@AfterAll
