@@ -13,7 +13,6 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 import com.commandoby.stringCalculator.components.Operand;
-import com.commandoby.stringCalculator.exceptions.*;
 import com.commandoby.stringCalculator.service.*;
 import com.commandoby.stringCalculator.service.impl.*;
 import com.commandoby.stringCalculator.swing.ViewConsoleSwing;

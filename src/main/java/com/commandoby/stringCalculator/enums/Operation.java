@@ -158,8 +158,19 @@ public enum Operation {
 		return type;
 	}
 
-	public static List<Operation> getOperationList(OperationType type) {
+	public static List<Operation> getOperationListByType(OperationType type) {
 		return Stream.of(values()).filter(t -> t.getType() == type).collect(Collectors.toList());
+	}
+	
+	public static StringBuilder getAllPatternOperationByType(OperationType type) {
+		StringBuilder builder = new StringBuilder();
+		for (Operation s : getOperationListByType(type)) {
+			if (!builder.isEmpty()) {
+				builder.append("|");
+			}
+			builder.append(s.getPattern());
+		}
+		return builder;
 	}
 
 	public abstract BigDecimal action(BigDecimal a, BigDecimal b);
